@@ -1,0 +1,318 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 15px;
+    overflow-y: auto;
+}
+
+.game-container {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    padding: 20px;
+    text-align: center;
+    max-width: 1200px;
+    width: 95%;
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
+}
+
+h1 {
+    color: #ff6b6b;
+    margin-bottom: 12px;
+    font-size: clamp(1.8rem, 3vw, 2.5rem);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+    flex-shrink: 0;
+}
+
+.game-info {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 10px;
+    font-size: clamp(1rem, 2vw, 1.3rem);
+    font-weight: bold;
+    padding: 10px 20px;
+    background: #f8f9fa;
+    border-radius: 12px;
+    flex-shrink: 0;
+}
+
+.game-info span {
+    font-size: clamp(1.3rem, 2.5vw, 1.8rem);
+    font-weight: 900;
+}
+
+.score {
+    color: #4ecdc4;
+}
+
+.combo {
+    color: #ff6b6b;
+}
+
+.remaining {
+    color: #95e1d3;
+}
+
+.selected-info {
+    margin-bottom: 12px;
+    padding: 8px 20px;
+    background: #fff3cd;
+    border-radius: 12px;
+    font-size: clamp(1rem, 2vw, 1.3rem);
+    font-weight: bold;
+    color: #856404;
+    flex-shrink: 0;
+}
+
+.selected-info span {
+    color: #ff6b6b;
+    font-size: clamp(1.4rem, 2.8vw, 2rem);
+    font-weight: 900;
+}
+
+.game-board {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    grid-template-rows: repeat(8, 1fr);
+    gap: 10px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 15px;
+    margin: 0 auto 15px;
+    user-select: none;
+    position: relative;
+    cursor: crosshair;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    aspect-ratio: 1;
+    width: 100%;
+    max-width: 600px;
+    flex-shrink: 0;
+}
+
+.apple {
+    aspect-ratio: 1;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 25 C40 10 10 15 10 45 C10 75 30 95 50 95 C70 95 90 75 90 45 C90 15 60 10 50 25 Z' fill='%23ff4d4d' stroke='%23cc0000' stroke-width='2'/%3E%3Cpath d='M50 25 Q55 10 65 5' fill='none' stroke='%23654321' stroke-width='3' stroke-linecap='round'/%3E%3Cpath d='M50 25 Q35 10 30 15 Q40 25 50 25' fill='%23228B22'/%3E%3Ccircle cx='35' cy='40' r='3' fill='white' opacity='0.3'/%3E%3C/svg%3E");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-weight: 900;
+    color: white;
+    cursor: crosshair;
+    transition: all 0.2s;
+    position: relative;
+    pointer-events: auto;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    overflow: visible;
+    line-height: 1;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+    padding: 0;
+    margin: 0;
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.2));
+}
+
+/* Remove old pseudo-elements */
+.apple::before,
+.apple::after {
+    display: none;
+}
+
+/* 숫자가 꼭지 위에 보이도록 */
+.apple .number {
+    position: relative;
+    z-index: 1;
+}
+
+.blank {
+    aspect-ratio: 1;
+    background: transparent;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+}
+
+.apple:hover {
+    transform: scale(1.05);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+}
+
+.apple.selected {
+    background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+    border-color: #2c7873;
+    transform: scale(1.08);
+    box-shadow: 0 6px 12px rgba(76, 175, 80, 0.4);
+    z-index: 10;
+}
+
+.apple.removing {
+    animation: removeApple 0.3s ease-out forwards;
+}
+
+@keyframes removeApple {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: scale(1.3) rotate(180deg);
+    }
+
+    100% {
+        transform: scale(0) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+.selection-box {
+    position: absolute;
+    border: 3px solid #4ecdc4;
+    background: rgba(78, 205, 196, 0.2);
+    pointer-events: none;
+    z-index: 5;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(78, 205, 196, 0.5);
+    animation: selectionPulse 1s ease-in-out infinite;
+}
+
+@keyframes selectionPulse {
+
+    0%,
+    100% {
+        border-color: #4ecdc4;
+        box-shadow: 0 0 10px rgba(78, 205, 196, 0.5);
+    }
+
+    50% {
+        border-color: #2c7873;
+        box-shadow: 0 0 15px rgba(78, 205, 196, 0.8);
+    }
+}
+
+.controls {
+    margin-top: 10px;
+    flex-shrink: 0;
+}
+
+.restart-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 50px;
+    font-size: clamp(1rem, 1.8vw, 1.2rem);
+    font-weight: bold;
+    cursor: pointer;
+    margin-bottom: 12px;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.restart-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.instructions {
+    background: #f8f9fa;
+    padding: 12px 15px;
+    border-radius: 10px;
+    color: #555;
+    font-size: clamp(0.85rem, 1.5vw, 1rem);
+    line-height: 1.7;
+    text-align: left;
+    flex-shrink: 0;
+}
+
+.game-over {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    text-align: center;
+    min-width: 300px;
+}
+
+.game-over h2 {
+    color: #ff6b6b;
+    margin-bottom: 20px;
+    font-size: 2rem;
+}
+
+.game-over p {
+    margin: 10px 0;
+    font-size: 1.1rem;
+    color: #666;
+}
+
+.game-over button {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 50px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.game-over button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .game-container {
+        padding: 15px;
+        width: 98%;
+    }
+
+    .game-board {
+        max-width: 100%;
+        gap: 6px;
+        padding: 12px;
+    }
+
+    .game-info {
+        flex-direction: column;
+        gap: 8px;
+    }
+}
