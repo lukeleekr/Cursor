@@ -4,7 +4,7 @@ A collection of web development projects including React applications, vanilla H
 
 ## 📁 Project Structure
 
-- **Chapter 4/**
+- **Chapter-4/**
   - `instagram-app/` - Instagram clone built with Vite + React
   - `memo-app/` - Memo app built with Create React App
   - `hello.py` - Simple Python script
@@ -73,21 +73,21 @@ Once the container is running, open a terminal and run:
 
 #### Instagram App (Vite)
 ```bash
-cd "Chapter 4/instagram-app"
+cd "Chapter-4/instagram-app"
 npm run dev
 ```
 The app will be available at `http://localhost:5173`
 
 #### Memo App (Create React App)
 ```bash
-cd "Chapter 4/memo-app"
+cd "Chapter-4/memo-app"
 npm start
 ```
 The app will be available at `http://localhost:3000`
 
 #### Python Script
 ```bash
-cd "Chapter 4"
+cd "Chapter-4"
 python3 hello.py
 ```
 
@@ -104,7 +104,7 @@ python3 hello.py
 
 #### Dependencies not installed
 - Run manually: `bash .devcontainer/post-create.sh`
-- Or reinstall: `cd "Chapter 4/instagram-app" && npm install`
+- Or reinstall: `cd "Chapter-4/instagram-app" && npm install`
 
 ### Manual Setup (Without DevContainer)
 
@@ -114,7 +114,7 @@ If you prefer to run locally without Docker:
 2. **Install Python 3.11+** from [python.org](https://www.python.org/)
 3. **Install dependencies**:
    ```bash
-   cd "Chapter 4/instagram-app" && npm install
+   cd "Chapter-4/instagram-app" && npm install
    cd "../memo-app" && npm install
    ```
 
@@ -143,4 +143,5 @@ If you prefer to run locally without Docker:
 ---
 
 **Happy Coding! 🚀**
+
 

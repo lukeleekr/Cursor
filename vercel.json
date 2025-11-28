@@ -1,0 +1,8 @@
+{
+  "buildCommand": "cd 'Chapter-4/Projects/luke-mall' && npm run build",
+  "outputDirectory": "Chapter-4/Projects/luke-mall/.next",
+  "framework": "nextjs",
+  "installCommand": "cd 'Chapter-4/Projects/luke-mall' && npm install",
+  "rootDirectory": "Chapter-4/Projects/luke-mall"
+}
+

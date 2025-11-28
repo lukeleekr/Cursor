@@ -8,9 +8,9 @@ set -e
 echo "🚀 Setting up Vibe Book development environment..."
 
 # Install dependencies for instagram-app (Vite + React)
-if [ -d "Chapter 4/instagram-app" ]; then
+if [ -d "Chapter-4/instagram-app" ]; then
     echo "📦 Installing dependencies for instagram-app..."
-    cd "Chapter 4/instagram-app"
+    cd "Chapter-4/instagram-app"
     if [ -f "package.json" ]; then
         npm install
         echo "✅ instagram-app dependencies installed"
@@ -19,9 +19,9 @@ if [ -d "Chapter 4/instagram-app" ]; then
 fi
 
 # Install dependencies for memo-app (Create React App)
-if [ -d "Chapter 4/memo-app" ]; then
+if [ -d "Chapter-4/memo-app" ]; then
     echo "📦 Installing dependencies for memo-app..."
-    cd "Chapter 4/memo-app"
+    cd "Chapter-4/memo-app"
     if [ -f "package.json" ]; then
         npm install
         echo "✅ memo-app dependencies installed"
@@ -32,6 +32,7 @@ fi
 echo "✨ Development environment setup complete!"
 echo ""
 echo "To start a project:"
-echo "  - Vite app: cd 'Chapter 4/instagram-app' && npm run dev"
-echo "  - CRA app:  cd 'Chapter 4/memo-app' && npm start"
+echo "  - Vite app: cd 'Chapter-4/instagram-app' && npm run dev"
+echo "  - CRA app:  cd 'Chapter-4/memo-app' && npm start"
+
 
