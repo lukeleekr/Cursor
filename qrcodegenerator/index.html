@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR 코드 생성기</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .input-field {
+            transition: all 0.3s ease;
+            border: 2px solid #e5e7eb;
+        }
+        
+        .input-field:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(239, 68, 68, 0.3);
+        }
+        
+        .qr-item {
+            animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .qr-preview {
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        
+        .file-input-label {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .file-input-label:hover {
+            background-color: #f3f4f6;
+        }
+        
+        .progress-bar {
+            transition: width 0.3s ease;
+        }
+        
+        .toast {
+            animation: toastIn 0.3s ease;
+        }
+        
+        @keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+    <div class="max-w-4xl mx-auto">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-4xl md:text-5xl font-bold text-white mb-3">
+                🎨 QR 코드 생성기
+            </h1>
+            <p class="text-gray-300 text-lg">로고가 포함된 맞춤형 QR 코드를 간편하게 만들어보세요</p>
+        </div>
+        
+        <!-- Main Card -->
+        <div class="glass-card rounded-3xl shadow-2xl p-6 md:p-8">
+            <!-- Logo Upload Section -->
+            <div class="mb-8">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                    <span class="text-2xl">🖼️</span> 중앙 로고 이미지
+                </h2>
+                <div class="flex flex-col md:flex-row gap-4 items-start">
+                    <label class="file-input-label flex-1 border-2 border-dashed border-gray-300 rounded-xl p-6 text-center">
+                        <input type="file" id="logoInput" accept="image/*" class="hidden">
+                        <div id="logoPreviewContainer" class="flex flex-col items-center gap-3">
+                            <div class="w-16 h-16 bg-gray-100 rounded-xl flex items-center justify-center">
+                                <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                </svg>
+                            </div>
+                            <span class="text-gray-600">클릭하여 로고 이미지 선택</span>
+                            <span class="text-sm text-gray-400">PNG, JPG, SVG 지원</span>
+                        </div>
+                    </label>
+                    <div id="selectedLogoPreview" class="hidden">
+                        <div class="relative">
+                            <img id="logoPreviewImg" class="w-24 h-24 object-contain bg-white rounded-xl border-2 border-gray-200 p-2">
+                            <button onclick="clearLogo()" class="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full text-sm hover:bg-red-600 transition">×</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- QR Items Section -->
+            <div class="mb-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-semibold text-gray-800 flex items-center gap-2">
+                        <span class="text-2xl">🔗</span> QR 코드 목록
+                        <span id="itemCount" class="text-sm font-normal text-gray-500">(1/10)</span>
+                    </h2>
+                    <button onclick="addItem()" id="addBtn" class="btn-primary text-white px-4 py-2 rounded-xl font-medium flex items-center gap-2">
+                        <span>+</span> 추가
+                    </button>
+                </div>
+                
+                <div id="qrItemsContainer" class="space-y-4">
+                    <!-- QR items will be added here -->
+                </div>
+            </div>
+            
+            <!-- Generate Section -->
+            <div class="border-t border-gray-200 pt-6">
+                <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
+                    <div class="flex items-center gap-3 w-full md:w-auto">
+                        <button onclick="selectFolder()" class="px-4 py-3 bg-gray-100 hover:bg-gray-200 rounded-xl transition flex items-center gap-2 text-gray-700">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path>
+                            </svg>
+                            저장 폴더 선택
+                        </button>
+                        <span id="selectedFolder" class="text-sm text-gray-500 truncate max-w-[200px]">폴더 미선택 (개별 다운로드)</span>
+                    </div>
+                    <button onclick="generateAll()" class="btn-secondary text-white px-8 py-3 rounded-xl font-semibold text-lg flex items-center gap-2 w-full md:w-auto justify-center">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path>
+                        </svg>
+                        QR 코드 생성
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Preview Section -->
+        <div id="previewSection" class="hidden mt-8 glass-card rounded-3xl shadow-2xl p-6 md:p-8">
+            <h2 class="text-xl font-semibold text-gray-800 mb-6 flex items-center gap-2">
+                <span class="text-2xl">✨</span> 생성된 QR 코드
+            </h2>
+            <div id="previewContainer" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <!-- Generated QR codes will appear here -->
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="text-center mt-8 text-gray-400 text-sm">
+            <p>💡 Tip: 로고는 QR 코드 크기의 약 30% 이하로 유지하는 것이 좋습니다</p>
+        </div>
+    </div>
+    
+    <!-- Toast Container -->
+    <div id="toastContainer" class="fixed bottom-4 right-4 z-50 space-y-2"></div>
+    
+    <!-- Progress Modal -->
+    <div id="progressModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-2xl p-8 max-w-md w-full mx-4">
+            <h3 class="text-xl font-semibold text-gray-800 mb-4 text-center">QR 코드 생성 중...</h3>
+            <div class="w-full bg-gray-200 rounded-full h-3 mb-3">
+                <div id="progressBar" class="progress-bar bg-gradient-to-r from-indigo-500 to-purple-500 h-3 rounded-full" style="width: 0%"></div>
+            </div>
+            <p id="progressText" class="text-center text-gray-600">0 / 0</p>
+        </div>
+    </div>
+
+    <script>
+        let qrItems = [];
+        let logoDataUrl = null;
+        let selectedFolderHandle = null;
+        let itemIdCounter = 0;
+        const MAX_ITEMS = 10;
+        
+        // Initialize with one item
+        document.addEventListener('DOMContentLoaded', () => {
+            addItem();
+        });
+        
+        // Logo handling
+        document.getElementById('logoInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    logoDataUrl = e.target.result;
+                    document.getElementById('logoPreviewImg').src = logoDataUrl;
+                    document.getElementById('selectedLogoPreview').classList.remove('hidden');
+                    document.getElementById('logoPreviewContainer').innerHTML = `
+                        <span class="text-green-600 font-medium">✓ 로고가 선택되었습니다</span>
+                        <span class="text-sm text-gray-400">다른 이미지를 선택하려면 클릭하세요</span>
+                    `;
+                    showToast('로고 이미지가 등록되었습니다', 'success');
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        function clearLogo() {
+            logoDataUrl = null;
+            document.getElementById('logoInput').value = '';
+            document.getElementById('selectedLogoPreview').classList.add('hidden');
+            document.getElementById('logoPreviewContainer').innerHTML = `
+                <div class="w-16 h-16 bg-gray-100 rounded-xl flex items-center justify-center">
+                    <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                </div>
+                <span class="text-gray-600">클릭하여 로고 이미지 선택</span>
+                <span class="text-sm text-gray-400">PNG, JPG, SVG 지원</span>
+            `;
+            showToast('로고 이미지가 제거되었습니다', 'info');
+        }
+        
+        function addItem() {
+            if (qrItems.length >= MAX_ITEMS) {
+                showToast(`최대 ${MAX_ITEMS}개까지만 추가할 수 있습니다`, 'warning');
+                return;
+            }
+            
+            const id = ++itemIdCounter;
+            qrItems.push({ id, url: '', filename: '' });
+            
+            const container = document.getElementById('qrItemsContainer');
+            const itemHtml = `
+                <div id="qrItem-${id}" class="qr-item bg-gray-50 rounded-xl p-4">
+                    <div class="flex items-start gap-4">
+                        <div class="flex-shrink-0 w-8 h-8 bg-indigo-100 text-indigo-600 rounded-lg flex items-center justify-center font-semibold">
+                            ${qrItems.length}
+                        </div>
+                        <div class="flex-1 space-y-3">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">URL 또는 텍스트</label>
+                                <input type="text" 
+                                    id="url-${id}" 
+                                    placeholder="https://example.com" 
+                                    class="input-field w-full px-4 py-3 rounded-xl outline-none"
+                                    onchange="updateItem(${id})"
+                                    oninput="updateItem(${id})">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">파일명 (선택사항)</label>
+                                <input type="text" 
+                                    id="filename-${id}" 
+                                    placeholder="qrcode (확장자 자동추가)" 
+                                    class="input-field w-full px-4 py-3 rounded-xl outline-none"
+                                    onchange="updateItem(${id})"
+                                    oninput="updateItem(${id})">
+                            </div>
+                        </div>
+                        <button onclick="removeItem(${id})" class="flex-shrink-0 w-8 h-8 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg flex items-center justify-center transition ${qrItems.length === 1 ? 'invisible' : ''}">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            container.insertAdjacentHTML('beforeend', itemHtml);
+            updateItemCount();
+            updateDeleteButtons();
+        }
+        
+        function removeItem(id) {
+            if (qrItems.length <= 1) return;
+            
+            qrItems = qrItems.filter(item => item.id !== id);
+            document.getElementById(`qrItem-${id}`).remove();
+            updateItemCount();
+            updateItemNumbers();
+            updateDeleteButtons();
+        }
+        
+        function updateItem(id) {
+            const item = qrItems.find(i => i.id === id);
+            if (item) {
+                item.url = document.getElementById(`url-${id}`).value;
+                item.filename = document.getElementById(`filename-${id}`).value;
+            }
+        }
+        
+        function updateItemCount() {
+            document.getElementById('itemCount').textContent = `(${qrItems.length}/${MAX_ITEMS})`;
+            
+            const addBtn = document.getElementById('addBtn');
+            if (qrItems.length >= MAX_ITEMS) {
+                addBtn.disabled = true;
+                addBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            } else {
+                addBtn.disabled = false;
+                addBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+        }
+        
+        function updateItemNumbers() {
+            const items = document.querySelectorAll('.qr-item');
+            items.forEach((item, index) => {
+                const numBadge = item.querySelector('.w-8.h-8.bg-indigo-100');
+                if (numBadge) {
+                    numBadge.textContent = index + 1;
+                }
+            });
+        }
+        
+        function updateDeleteButtons() {
+            const items = document.querySelectorAll('.qr-item');
+            items.forEach(item => {
+                const deleteBtn = item.querySelector('button');
+                if (qrItems.length === 1) {
+                    deleteBtn.classList.add('invisible');
+                } else {
+                    deleteBtn.classList.remove('invisible');
+                }
+            });
+        }
+        
+        async function selectFolder() {
+            try {
+                if (!('showDirectoryPicker' in window)) {
+                    showToast('이 브라우저는 폴더 선택을 지원하지 않습니다. Chrome 또는 Edge를 사용해주세요.', 'warning');
+                    return;
+                }
+                
+                selectedFolderHandle = await window.showDirectoryPicker();
+                document.getElementById('selectedFolder').textContent = `📁 ${selectedFolderHandle.name}`;
+                showToast(`저장 폴더: ${selectedFolderHandle.name}`, 'success');
+            } catch (e) {
+                if (e.name !== 'AbortError') {
+                    console.error(e);
+                    showToast('폴더 선택 중 오류가 발생했습니다', 'error');
+                }
+            }
+        }
+        
+        async function generateAll() {
+            // Update all items from inputs
+            qrItems.forEach(item => {
+                item.url = document.getElementById(`url-${item.id}`).value;
+                item.filename = document.getElementById(`filename-${item.id}`).value;
+            });
+            
+            // Validate
+            const validItems = qrItems.filter(item => item.url.trim());
+            if (validItems.length === 0) {
+                showToast('최소 하나의 URL을 입력해주세요', 'warning');
+                return;
+            }
+            
+            // Show progress
+            const modal = document.getElementById('progressModal');
+            const progressBar = document.getElementById('progressBar');
+            const progressText = document.getElementById('progressText');
+            modal.classList.remove('hidden');
+            
+            const previewSection = document.getElementById('previewSection');
+            const previewContainer = document.getElementById('previewContainer');
+            previewContainer.innerHTML = '';
+            previewSection.classList.remove('hidden');
+            
+            const generatedQRs = [];
+            
+            for (let i = 0; i < validItems.length; i++) {
+                const item = validItems[i];
+                const progress = ((i + 1) / validItems.length) * 100;
+                progressBar.style.width = `${progress}%`;
+                progressText.textContent = `${i + 1} / ${validItems.length}`;
+                
+                try {
+                    const qrCode = new QRCodeStyling({
+                        width: 400,
+                        height: 400,
+                        type: "png",
+                        data: item.url,
+                        image: logoDataUrl || undefined,
+                        dotsOptions: {
+                            color: "#1a1a2e",
+                            type: "rounded"
+                        },
+                        backgroundOptions: {
+                            color: "#ffffff",
+                        },
+                        imageOptions: {
+                            crossOrigin: "anonymous",
+                            margin: 10,
+                            imageSize: 0.4,
+                            hideBackgroundDots: true
+                        },
+                        cornersSquareOptions: {
+                            type: "extra-rounded",
+                            color: "#1a1a2e"
+                        },
+                        cornersDotOptions: {
+                            type: "dot",
+                            color: "#6366f1"
+                        }
+                    });
+                    
+                    const blob = await qrCode.getRawData("png");
+                    const dataUrl = URL.createObjectURL(blob);
+                    const filename = item.filename.trim() || `qrcode_${i + 1}`;
+                    
+                    generatedQRs.push({
+                        blob,
+                        dataUrl,
+                        filename: `${filename}.png`,
+                        url: item.url
+                    });
+                    
+                    // Add preview
+                    const previewHtml = `
+                        <div class="qr-preview bg-white rounded-xl p-4 shadow-md">
+                            <img src="${dataUrl}" alt="QR Code" class="w-full aspect-square object-contain mb-3 rounded-lg">
+                            <p class="text-sm text-gray-600 truncate mb-2" title="${item.url}">${item.url}</p>
+                            <p class="text-xs text-gray-400 mb-3">${filename}.png</p>
+                            <button onclick="downloadSingle('${dataUrl}', '${filename}.png')" 
+                                class="w-full py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm text-gray-700 transition flex items-center justify-center gap-1">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                                </svg>
+                                다운로드
+                            </button>
+                        </div>
+                    `;
+                    previewContainer.insertAdjacentHTML('beforeend', previewHtml);
+                    
+                    // Small delay for visual feedback
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                    
+                } catch (error) {
+                    console.error(`Error generating QR for ${item.url}:`, error);
+                    showToast(`QR 생성 실패: ${item.url}`, 'error');
+                }
+            }
+            
+            modal.classList.add('hidden');
+            
+            // Save to folder if selected
+            if (selectedFolderHandle && generatedQRs.length > 0) {
+                let savedCount = 0;
+                for (const qr of generatedQRs) {
+                    try {
+                        const fileHandle = await selectedFolderHandle.getFileHandle(qr.filename, { create: true });
+                        const writable = await fileHandle.createWritable();
+                        await writable.write(qr.blob);
+                        await writable.close();
+                        savedCount++;
+                    } catch (error) {
+                        console.error(`Error saving ${qr.filename}:`, error);
+                    }
+                }
+                showToast(`${savedCount}개의 QR 코드가 저장되었습니다!`, 'success');
+            } else {
+                showToast(`${generatedQRs.length}개의 QR 코드가 생성되었습니다!`, 'success');
+            }
+            
+            // Scroll to preview
+            previewSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+        
+        function downloadSingle(dataUrl, filename) {
+            const link = document.createElement('a');
+            link.href = dataUrl;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            showToast(`${filename} 다운로드 완료`, 'success');
+        }
+        
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const colors = {
+                success: 'bg-green-500',
+                error: 'bg-red-500',
+                warning: 'bg-yellow-500',
+                info: 'bg-indigo-500'
+            };
+            
+            const icons = {
+                success: '✓',
+                error: '✕',
+                warning: '⚠',
+                info: 'ℹ'
+            };
+            
+            const toast = document.createElement('div');
+            toast.className = `toast ${colors[type]} text-white px-4 py-3 rounded-xl shadow-lg flex items-center gap-2`;
+            toast.innerHTML = `
+                <span class="text-lg">${icons[type]}</span>
+                <span>${message}</span>
+            `;
+            
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(100px)';
+                toast.style.transition = 'all 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
+
