@@ -7,17 +7,31 @@
     <meta name="description" content="한국거래소(KRX) 상장 주식 시세 정보를 조회할 수 있는 대시보드">
     <meta name="keywords" content="KRX, 주식, 시세, 대시보드, KOSPI, KOSDAQ">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-dark: #0f1419;
-            --bg-card: #1c2128;
-            --border: #30363d;
-            --text-primary: #e6edf3;
-            --text-secondary: #8b949e;
-            --accent-green: #3fb950;
-            --accent-red: #f85149;
-            --accent-blue: #58a6ff;
-            --accent-gold: #d4a72c;
+            --bg-primary: #f8fafc;
+            --bg-secondary: #ffffff;
+            --bg-card: #ffffff;
+            --border: #e2e8f0;
+            --border-light: #f1f5f9;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --text-muted: #94a3b8;
+            --accent-green: #10b981;
+            --accent-green-light: #d1fae5;
+            --accent-red: #ef4444;
+            --accent-red-light: #fee2e2;
+            --accent-blue: #3b82f6;
+            --accent-blue-light: #dbeafe;
+            --accent-purple: #8b5cf6;
+            --accent-purple-light: #ede9fe;
+            --accent-amber: #f59e0b;
+            --accent-amber-light: #fef3c7;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
         }
 
         * {
@@ -27,11 +41,11 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: var(--bg-dark);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
             color: var(--text-primary);
             min-height: 100vh;
-            line-height: 1.5;
+            line-height: 1.6;
         }
 
         .container {
@@ -43,15 +57,27 @@
         header {
             text-align: center;
             margin-bottom: 2rem;
-            padding-bottom: 2rem;
-            border-bottom: 1px solid var(--border);
+        }
+
+        .logo-section {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: var(--bg-card);
+            padding: 0.75rem 1.5rem;
+            border-radius: 100px;
+            box-shadow: var(--shadow-md);
+            margin-bottom: 1.5rem;
+        }
+
+        .logo-icon {
+            font-size: 1.75rem;
         }
 
         h1 {
-            font-size: 2rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            background: linear-gradient(135deg, var(--accent-gold), #f0c75e);
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -60,81 +86,76 @@
         .subtitle {
             color: var(--text-secondary);
             font-size: 0.95rem;
+            font-weight: 400;
         }
 
-        .stats-bar {
-            display: flex;
-            gap: 2rem;
-            justify-content: center;
-            margin-top: 1.5rem;
-            flex-wrap: wrap;
+        .control-panel {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 1.5rem 2rem;
+            box-shadow: var(--shadow-lg);
+            margin-bottom: 1.5rem;
         }
 
-        .stat-item {
-            text-align: center;
-        }
-
-        .stat-label {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .stat-value {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--accent-blue);
-        }
-
-        .date-picker-section {
+        .control-row {
             display: flex;
             justify-content: center;
             align-items: center;
             gap: 1rem;
-            margin-top: 2rem;
-            padding: 1.5rem;
-            background: var(--bg-card);
-            border-radius: 12px;
             flex-wrap: wrap;
         }
 
-        .date-picker-section label {
-            font-size: 0.9rem;
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .control-group label {
+            font-size: 0.85rem;
+            font-weight: 500;
             color: var(--text-secondary);
         }
 
-        .date-input {
-            padding: 0.75rem 1rem;
-            font-size: 1rem;
-            background: var(--bg-dark);
-            border: 1px solid var(--border);
-            border-radius: 8px;
+        .date-input, .filter-select {
+            padding: 0.625rem 1rem;
+            font-size: 0.9rem;
+            font-family: inherit;
+            background: var(--bg-primary);
+            border: 2px solid var(--border);
+            border-radius: 12px;
             color: var(--text-primary);
             cursor: pointer;
-            transition: border-color 0.2s;
+            transition: all 0.2s ease;
         }
 
-        .date-input:hover, .date-input:focus {
+        .date-input:hover, .filter-select:hover {
+            border-color: var(--accent-blue);
+        }
+
+        .date-input:focus, .filter-select:focus {
             border-color: var(--accent-blue);
             outline: none;
+            box-shadow: 0 0 0 3px var(--accent-blue-light);
         }
 
         .search-btn {
-            padding: 0.75rem 1.5rem;
+            padding: 0.625rem 1.5rem;
             font-size: 0.9rem;
             font-weight: 600;
-            background: linear-gradient(135deg, var(--accent-gold), #f0c75e);
+            font-family: inherit;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
             border: none;
-            border-radius: 8px;
-            color: var(--bg-dark);
+            border-radius: 12px;
+            color: white;
             cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 14px 0 rgba(59, 130, 246, 0.4);
         }
 
         .search-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(212, 167, 44, 0.3);
+            box-shadow: 0 6px 20px 0 rgba(59, 130, 246, 0.5);
         }
 
         .search-btn:active {
@@ -142,7 +163,7 @@
         }
 
         .search-btn:disabled {
-            opacity: 0.6;
+            opacity: 0.7;
             cursor: not-allowed;
             transform: none;
         }
@@ -153,119 +174,168 @@
             flex-wrap: wrap;
             justify-content: center;
             margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-light);
         }
 
         .quick-date-btn {
-            padding: 0.4rem 0.8rem;
-            font-size: 0.75rem;
-            background: transparent;
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+            font-weight: 500;
+            font-family: inherit;
+            background: var(--bg-primary);
             border: 1px solid var(--border);
-            border-radius: 6px;
+            border-radius: 100px;
             color: var(--text-secondary);
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.2s ease;
         }
 
         .quick-date-btn:hover {
+            background: var(--accent-blue-light);
             border-color: var(--accent-blue);
             color: var(--accent-blue);
         }
 
-        .filter-section {
+        .stats-bar {
             display: flex;
+            gap: 1rem;
             justify-content: center;
-            align-items: center;
-            gap: 1.5rem;
-            margin-top: 1rem;
-            padding: 1rem 1.5rem;
-            background: rgba(255, 255, 255, 0.02);
-            border-radius: 8px;
+            margin-top: 1.5rem;
             flex-wrap: wrap;
         }
 
-        .filter-group {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .filter-group label {
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-        }
-
-        .filter-select {
-            padding: 0.5rem 0.75rem;
-            font-size: 0.85rem;
-            background: var(--bg-dark);
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            color: var(--text-primary);
-            cursor: pointer;
-            transition: border-color 0.2s;
-        }
-
-        .filter-select:hover, .filter-select:focus {
-            border-color: var(--accent-blue);
-            outline: none;
-        }
-
-        .filter-select option {
-            background: var(--bg-dark);
-            color: var(--text-primary);
-        }
-
-        .loading {
+        .stat-card {
+            background: var(--bg-card);
+            padding: 1rem 1.5rem;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
             text-align: center;
-            padding: 4rem;
+            min-width: 120px;
+        }
+
+        .stat-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-value {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--accent-blue);
+        }
+
+        .stat-value.success {
+            color: var(--accent-green);
+        }
+
+        .stat-value.error {
+            color: var(--accent-red);
+        }
+
+        /* Loading & Messages */
+        .message-box {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .message-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .message-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .message-text {
             color: var(--text-secondary);
+            font-size: 0.95rem;
+            max-width: 400px;
+            margin: 0 auto;
         }
 
         .spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid var(--border);
-            border-top-color: var(--accent-gold);
+            width: 48px;
+            height: 48px;
+            border: 4px solid var(--border);
+            border-top-color: var(--accent-blue);
             border-radius: 50%;
             animation: spin 1s linear infinite;
-            margin: 0 auto 1rem;
+            margin: 0 auto 1.5rem;
         }
 
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
 
-        .error {
-            text-align: center;
+        /* Notice Box - Friendly style */
+        .notice-box {
+            background: linear-gradient(135deg, var(--accent-amber-light), #fff7ed);
+            border: 1px solid #fed7aa;
+            border-radius: 16px;
             padding: 2rem;
-            background: rgba(248, 81, 73, 0.1);
-            border: 1px solid var(--accent-red);
-            border-radius: 8px;
-            color: var(--accent-red);
+            text-align: center;
+            max-width: 500px;
+            margin: 2rem auto;
+        }
+
+        .notice-box .message-icon {
+            font-size: 3rem;
+        }
+
+        .notice-box .message-title {
+            color: #92400e;
+        }
+
+        .notice-box .message-text {
+            color: #a16207;
+        }
+
+        .notice-tips {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #fed7aa;
+        }
+
+        .notice-tips p {
+            font-size: 0.85rem;
+            color: #a16207;
+        }
+
+        /* Table */
+        .table-container {
+            background: var(--bg-card);
+            border-radius: 20px;
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            background: var(--bg-card);
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
         }
 
         thead {
-            background: rgba(255, 255, 255, 0.05);
+            background: linear-gradient(135deg, #f8fafc, #f1f5f9);
         }
 
         th {
-            padding: 1rem;
+            padding: 1rem 1.25rem;
             text-align: left;
             font-weight: 600;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             text-transform: uppercase;
             letter-spacing: 0.05em;
             color: var(--text-secondary);
-            border-bottom: 1px solid var(--border);
+            border-bottom: 2px solid var(--border);
         }
 
         th.right, td.right {
@@ -273,8 +343,8 @@
         }
 
         td {
-            padding: 1rem;
-            border-bottom: 1px solid var(--border);
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--border-light);
             font-size: 0.9rem;
         }
 
@@ -283,91 +353,112 @@
         }
 
         tr:hover {
-            background: rgba(255, 255, 255, 0.02);
+            background: var(--bg-primary);
         }
 
         .rank {
             font-weight: 700;
-            color: var(--accent-gold);
+            color: var(--text-muted);
             width: 50px;
         }
 
-        .rank-1 { color: #ffd700; }
-        .rank-2 { color: #c0c0c0; }
-        .rank-3 { color: #cd7f32; }
+        .rank-1 { 
+            color: #eab308;
+            background: linear-gradient(135deg, #fef9c3, #fef08a);
+            border-radius: 8px;
+            padding: 0.25rem 0.5rem;
+        }
+        .rank-2 { 
+            color: #6b7280;
+            background: #f3f4f6;
+            border-radius: 8px;
+            padding: 0.25rem 0.5rem;
+        }
+        .rank-3 { 
+            color: #b45309;
+            background: #fef3c7;
+            border-radius: 8px;
+            padding: 0.25rem 0.5rem;
+        }
 
         .stock-name {
             font-weight: 600;
+            color: var(--text-primary);
         }
 
         .stock-code {
             font-size: 0.75rem;
-            color: var(--text-secondary);
+            color: var(--text-muted);
             margin-top: 2px;
         }
 
         .market-tag {
             display: inline-block;
-            padding: 0.2rem 0.5rem;
-            border-radius: 4px;
+            padding: 0.25rem 0.75rem;
+            border-radius: 100px;
             font-size: 0.7rem;
             font-weight: 600;
         }
 
         .market-KOSPI {
-            background: rgba(88, 166, 255, 0.15);
+            background: var(--accent-blue-light);
             color: var(--accent-blue);
         }
 
         .market-KOSDAQ {
-            background: rgba(212, 167, 44, 0.15);
-            color: var(--accent-gold);
+            background: var(--accent-purple-light);
+            color: var(--accent-purple);
         }
 
         .market-KONEX {
-            background: rgba(139, 148, 158, 0.15);
+            background: #f3f4f6;
             color: var(--text-secondary);
         }
 
         .price {
             font-weight: 600;
-            font-family: 'SF Mono', Monaco, monospace;
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+            color: var(--text-primary);
         }
 
         .change {
-            font-family: 'SF Mono', Monaco, monospace;
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
             font-weight: 500;
+            padding: 0.25rem 0.5rem;
+            border-radius: 6px;
         }
 
         .positive {
             color: var(--accent-green);
+            background: var(--accent-green-light);
         }
 
         .negative {
             color: var(--accent-red);
+            background: var(--accent-red-light);
         }
 
         .neutral {
-            color: var(--text-secondary);
+            color: var(--text-muted);
         }
 
         .volume {
-            font-family: 'SF Mono', Monaco, monospace;
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
             color: var(--text-secondary);
         }
 
         .market-cap {
-            font-family: 'SF Mono', Monaco, monospace;
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
             font-size: 0.85rem;
+            font-weight: 500;
         }
 
         footer {
             text-align: center;
             margin-top: 2rem;
-            padding-top: 2rem;
-            border-top: 1px solid var(--border);
-            color: var(--text-secondary);
-            font-size: 0.8rem;
+            padding: 2rem;
+            color: var(--text-muted);
+            font-size: 0.85rem;
         }
 
         footer a {
@@ -379,8 +470,22 @@
             text-decoration: underline;
         }
 
+        footer p {
+            margin-bottom: 0.5rem;
+        }
+
+        .made-by {
+            margin-top: 1rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
         @media (max-width: 900px) {
             .container {
+                padding: 1rem;
+            }
+
+            .control-panel {
                 padding: 1rem;
             }
 
@@ -392,97 +497,105 @@
             .hide-mobile {
                 display: none;
             }
+
+            .stat-card {
+                min-width: 100px;
+                padding: 0.75rem 1rem;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>📊 KRX 주식 대시보드</h1>
+            <div class="logo-section">
+                <span class="logo-icon">📊</span>
+                <h1>KRX 주식 대시보드</h1>
+            </div>
             <p class="subtitle">한국거래소 상장 주식 시세 정보</p>
-            <div class="date-picker-section">
-                <label for="dateInput">📅 조회 날짜:</label>
-                <input type="date" id="dateInput" class="date-input">
-                <button id="searchBtn" class="search-btn">🔍 조회하기</button>
-                <div class="quick-dates">
-                    <button class="quick-date-btn" data-days="0">오늘</button>
-                    <button class="quick-date-btn" data-days="1">어제</button>
-                    <button class="quick-date-btn" data-days="7">1주일 전</button>
-                    <button class="quick-date-btn" data-days="30">1개월 전</button>
-                    <button class="quick-date-btn" data-days="365">1년 전</button>
-                </div>
-                <div class="filter-section">
-                    <div class="filter-group">
-                        <label for="displayCount">📋 표시 개수:</label>
-                        <select id="displayCount" class="filter-select">
-                            <option value="50">50개</option>
-                            <option value="100">100개</option>
-                            <option value="150">150개</option>
-                            <option value="200">200개</option>
-                            <option value="250">250개</option>
-                            <option value="300">300개</option>
-                        </select>
-                    </div>
-                    <div class="filter-group">
-                        <label for="sortBy">🔃 정렬 기준:</label>
-                        <select id="sortBy" class="filter-select">
-                            <option value="marketCap-desc">시가총액 높은순</option>
-                            <option value="marketCap-asc">시가총액 낮은순</option>
-                            <option value="price-desc">종가 높은순</option>
-                            <option value="price-asc">종가 낮은순</option>
-                            <option value="change-desc">등락률 높은순</option>
-                            <option value="change-asc">등락률 낮은순</option>
-                            <option value="volume-desc">거래량 많은순</option>
-                            <option value="volume-asc">거래량 적은순</option>
-                            <option value="name-asc">종목명 (ㄱ-ㅎ)</option>
-                            <option value="name-desc">종목명 (ㅎ-ㄱ)</option>
-                            <option value="market-asc">시장 (KONEX→KOSDAQ→KOSPI)</option>
-                            <option value="market-desc">시장 (KOSPI→KOSDAQ→KONEX)</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <div class="stats-bar">
-                <div class="stat-item">
-                    <div class="stat-label">조회일</div>
-                    <div class="stat-value" id="baseDate">-</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-label">데이터 수</div>
-                    <div class="stat-value" id="totalCount">-</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-label">상태</div>
-                    <div class="stat-value" id="status">날짜를 선택하세요</div>
-                </div>
-            </div>
         </header>
 
+        <div class="control-panel">
+            <div class="control-row">
+                <div class="control-group">
+                    <label for="dateInput">📅 날짜</label>
+                    <input type="date" id="dateInput" class="date-input">
+                </div>
+                <div class="control-group">
+                    <label for="displayCount">📋 표시</label>
+                    <select id="displayCount" class="filter-select">
+                        <option value="50">50개</option>
+                        <option value="100">100개</option>
+                        <option value="150">150개</option>
+                        <option value="200">200개</option>
+                        <option value="250">250개</option>
+                        <option value="300">300개</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label for="sortBy">🔃 정렬</label>
+                    <select id="sortBy" class="filter-select">
+                        <option value="marketCap-desc">시가총액 ↓</option>
+                        <option value="marketCap-asc">시가총액 ↑</option>
+                        <option value="price-desc">종가 ↓</option>
+                        <option value="price-asc">종가 ↑</option>
+                        <option value="change-desc">등락률 ↓</option>
+                        <option value="change-asc">등락률 ↑</option>
+                        <option value="volume-desc">거래량 ↓</option>
+                        <option value="volume-asc">거래량 ↑</option>
+                        <option value="name-asc">종목명 ㄱ→ㅎ</option>
+                        <option value="name-desc">종목명 ㅎ→ㄱ</option>
+                    </select>
+                </div>
+                <button id="searchBtn" class="search-btn">🔍 조회하기</button>
+            </div>
+            <div class="quick-dates">
+                <button class="quick-date-btn" data-days="0">오늘</button>
+                <button class="quick-date-btn" data-days="1">어제</button>
+                <button class="quick-date-btn" data-days="7">1주일 전</button>
+                <button class="quick-date-btn" data-days="30">1개월 전</button>
+                <button class="quick-date-btn" data-days="365">1년 전</button>
+            </div>
+        </div>
+
+        <div class="stats-bar">
+            <div class="stat-card">
+                <div class="stat-label">조회일</div>
+                <div class="stat-value" id="baseDate">-</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">종목 수</div>
+                <div class="stat-value" id="totalCount">-</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">상태</div>
+                <div class="stat-value" id="status">대기중</div>
+            </div>
+        </div>
+
         <main id="main">
-            <div class="loading" style="padding: 4rem; text-align: center; color: var(--text-secondary);">
-                <p>📊 위에서 날짜를 선택하고 조회 버튼을 클릭하세요.</p>
-                <p style="margin-top: 0.5rem; font-size: 0.85rem;">또는 빠른 날짜 버튼을 사용하세요.</p>
+            <div class="message-box">
+                <div class="message-icon">👆</div>
+                <div class="message-title">날짜를 선택해주세요</div>
+                <div class="message-text">위에서 조회하고 싶은 날짜를 선택하고 조회 버튼을 클릭하세요</div>
             </div>
         </main>
 
         <footer>
             <p>데이터 출처: <a href="https://data.go.kr" target="_blank">공공데이터포털</a> - 금융위원회_주식시세정보</p>
             <p>※ 본 데이터는 참고용이며, 투자 판단의 근거로 사용할 수 없습니다.</p>
-            <p style="margin-top: 1rem;">Made with ❤️ by <strong>Luke Lee</strong></p>
+            <p class="made-by">Made with ❤️ by <strong>Luke Lee</strong></p>
         </footer>
     </div>
 
     <script>
-        // API 설정
         const API_KEY = 'b6bb9c715523217634ed937f9007068217cdc3eff369d301787086b81def1493';
         const BASE_URL = 'https://apis.data.go.kr/1160100/service/GetStockSecuritiesInfoService/getStockPriceInfo';
 
-        // 숫자 포맷팅
         function formatNumber(num) {
             return new Intl.NumberFormat('ko-KR').format(num);
         }
 
-        // 시가총액 포맷팅 (억 단위)
         function formatMarketCap(num) {
             const billion = num / 100000000;
             if (billion >= 10000) {
@@ -491,13 +604,11 @@
             return formatNumber(Math.round(billion)) + '억';
         }
 
-        // 날짜 포맷팅
         function formatDate(dateStr) {
             if (!dateStr || dateStr.length !== 8) return dateStr;
             return `${dateStr.slice(0, 4)}.${dateStr.slice(4, 6)}.${dateStr.slice(6, 8)}`;
         }
 
-        // 변동률 클래스 결정
         function getChangeClass(value) {
             const num = parseFloat(value);
             if (num > 0) return 'positive';
@@ -505,14 +616,12 @@
             return 'neutral';
         }
 
-        // 변동 표시 (+ 기호 추가)
         function formatChange(value) {
             const num = parseFloat(value);
             if (num > 0) return '+' + formatNumber(num);
             return formatNumber(num);
         }
 
-        // 날짜를 YYYYMMDD 형식으로 변환
         function dateToApiFormat(date) {
             const year = date.getFullYear();
             const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -520,20 +629,17 @@
             return `${year}${month}${day}`;
         }
 
-        // 오늘 날짜 가져오기 (YYYY-MM-DD 형식)
         function getTodayString() {
             const today = new Date();
             return today.toISOString().split('T')[0];
         }
 
-        // N일 전 날짜 가져오기
         function getDaysAgo(days) {
             const date = new Date();
             date.setDate(date.getDate() - days);
             return date.toISOString().split('T')[0];
         }
 
-        // 주식 데이터 가져오기
         async function fetchStockData(selectedDate) {
             const params = new URLSearchParams({
                 serviceKey: API_KEY,
@@ -547,27 +653,21 @@
                 params.append('basDt', dateToApiFormat(dateObj));
             }
 
-            try {
-                const response = await fetch(`${BASE_URL}?${params}`);
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
-                const data = await response.json();
-                
-                if (data.response?.header?.resultCode !== '00') {
-                    throw new Error(data.response?.header?.resultMsg || 'API 오류');
-                }
-
-                return data.response.body;
-            } catch (error) {
-                console.error('Fetch error:', error);
-                throw error;
+            const response = await fetch(`${BASE_URL}?${params}`);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
+
+            const data = await response.json();
+            
+            if (data.response?.header?.resultCode !== '00') {
+                throw new Error(data.response?.header?.resultMsg || 'API 오류');
+            }
+
+            return data.response.body;
         }
 
-        // 정렬 함수
         function sortItems(items, sortBy) {
             const [field, order] = sortBy.split('-');
             const multiplier = order === 'desc' ? -1 : 1;
@@ -596,11 +696,6 @@
                         valueA = a.itmsNm || '';
                         valueB = b.itmsNm || '';
                         return multiplier * valueA.localeCompare(valueB, 'ko');
-                    case 'market':
-                        const marketOrder = { 'KONEX': 1, 'KOSDAQ': 2, 'KOSPI': 3 };
-                        valueA = marketOrder[a.mrktCtg] || 0;
-                        valueB = marketOrder[b.mrktCtg] || 0;
-                        break;
                     default:
                         valueA = parseInt(a.clpr) || 0;
                         valueB = parseInt(b.clpr) || 0;
@@ -610,81 +705,82 @@
             });
         }
 
-        // 테이블 렌더링
         function renderTable(items, displayCount, sortBy) {
             const sortedItems = sortItems(items, sortBy).slice(0, displayCount);
 
-            const tableHTML = `
-                <table>
-                    <thead>
-                        <tr>
-                            <th>순위</th>
-                            <th>종목명</th>
-                            <th>시장</th>
-                            <th class="right">종가 (원)</th>
-                            <th class="right">전일대비</th>
-                            <th class="right">등락률</th>
-                            <th class="right hide-mobile">거래량</th>
-                            <th class="right hide-mobile">시가총액</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${sortedItems.map((item, index) => {
-                            const rank = index + 1;
-                            const rankClass = rank <= 3 ? `rank-${rank}` : '';
-                            const changeClass = getChangeClass(item.vs);
-                            
-                            return `
-                                <tr>
-                                    <td class="rank ${rankClass}">${rank}</td>
-                                    <td>
-                                        <div class="stock-name">${item.itmsNm}</div>
-                                        <div class="stock-code">${item.srtnCd}</div>
-                                    </td>
-                                    <td>
-                                        <span class="market-tag market-${item.mrktCtg}">${item.mrktCtg}</span>
-                                    </td>
-                                    <td class="right price">${formatNumber(item.clpr)}</td>
-                                    <td class="right change ${changeClass}">${formatChange(item.vs)}</td>
-                                    <td class="right change ${changeClass}">${parseFloat(item.fltRt) > 0 ? '+' : ''}${item.fltRt}%</td>
-                                    <td class="right volume hide-mobile">${formatNumber(item.trqu)}</td>
-                                    <td class="right market-cap hide-mobile">${formatMarketCap(item.mrktTotAmt)}</td>
-                                </tr>
-                            `;
-                        }).join('')}
-                    </tbody>
-                </table>
-            `;
-
-            return tableHTML;
-        }
-
-        // 에러 표시
-        function renderError(message) {
             return `
-                <div class="error">
-                    <h3>⚠️ 데이터 로드 실패</h3>
-                    <p>${message}</p>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>순위</th>
+                                <th>종목명</th>
+                                <th>시장</th>
+                                <th class="right">종가</th>
+                                <th class="right">전일대비</th>
+                                <th class="right">등락률</th>
+                                <th class="right hide-mobile">거래량</th>
+                                <th class="right hide-mobile">시가총액</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${sortedItems.map((item, index) => {
+                                const rank = index + 1;
+                                const rankClass = rank <= 3 ? `rank-${rank}` : '';
+                                const changeClass = getChangeClass(item.vs);
+                                
+                                return `
+                                    <tr>
+                                        <td><span class="rank ${rankClass}">${rank}</span></td>
+                                        <td>
+                                            <div class="stock-name">${item.itmsNm}</div>
+                                            <div class="stock-code">${item.srtnCd}</div>
+                                        </td>
+                                        <td>
+                                            <span class="market-tag market-${item.mrktCtg}">${item.mrktCtg}</span>
+                                        </td>
+                                        <td class="right price">${formatNumber(item.clpr)}원</td>
+                                        <td class="right"><span class="change ${changeClass}">${formatChange(item.vs)}</span></td>
+                                        <td class="right"><span class="change ${changeClass}">${parseFloat(item.fltRt) > 0 ? '+' : ''}${item.fltRt}%</span></td>
+                                        <td class="right volume hide-mobile">${formatNumber(item.trqu)}</td>
+                                        <td class="right market-cap hide-mobile">${formatMarketCap(item.mrktTotAmt)}</td>
+                                    </tr>
+                                `;
+                            }).join('')}
+                        </tbody>
+                    </table>
                 </div>
             `;
         }
 
-        // 로딩 표시
+        function renderNoData() {
+            return `
+                <div class="notice-box">
+                    <div class="message-icon">📅</div>
+                    <div class="message-title">해당 날짜의 데이터가 없어요</div>
+                    <div class="message-text">
+                        주말이나 공휴일에는 주식 거래가 없어서 데이터가 제공되지 않아요.
+                    </div>
+                    <div class="notice-tips">
+                        <p>💡 다른 날짜를 선택해보세요!</p>
+                    </div>
+                </div>
+            `;
+        }
+
         function showLoading() {
             const mainEl = document.getElementById('main');
             mainEl.innerHTML = `
-                <div class="loading">
+                <div class="message-box">
                     <div class="spinner"></div>
-                    <p>전체 상장 주식 데이터를 불러오는 중...</p>
-                    <p style="font-size: 0.8rem; margin-top: 0.5rem;">약 3,000개 종목 로딩 중</p>
+                    <div class="message-title">데이터를 불러오고 있어요</div>
+                    <div class="message-text">잠시만 기다려주세요...</div>
                 </div>
             `;
         }
 
-        // 전역 데이터 저장소
         let currentStockData = [];
 
-        // 현재 필터 설정 가져오기
         function getFilterSettings() {
             return {
                 displayCount: parseInt(document.getElementById('displayCount').value),
@@ -692,7 +788,6 @@
             };
         }
 
-        // 테이블 다시 렌더링 (필터 변경 시)
         function reRenderTable() {
             if (currentStockData.length === 0) return;
             
@@ -701,7 +796,6 @@
             mainEl.innerHTML = renderTable(currentStockData, displayCount, sortBy);
         }
 
-        // 데이터 로드 및 렌더링
         async function loadData(selectedDate) {
             const mainEl = document.getElementById('main');
             const statusEl = document.getElementById('status');
@@ -711,8 +805,8 @@
 
             searchBtn.disabled = true;
             searchBtn.textContent = '⏳ 로딩중...';
-            statusEl.textContent = '로딩중...';
-            statusEl.style.color = 'var(--accent-blue)';
+            statusEl.textContent = '로딩중';
+            statusEl.className = 'stat-value';
             showLoading();
 
             try {
@@ -720,7 +814,13 @@
                 const items = body.items?.item;
 
                 if (!items || items.length === 0) {
-                    throw new Error('해당 날짜의 데이터가 없습니다. 주말이나 공휴일은 데이터가 없을 수 있습니다.');
+                    statusEl.textContent = '데이터 없음';
+                    statusEl.className = 'stat-value';
+                    baseDateEl.textContent = '-';
+                    totalCountEl.textContent = '-';
+                    currentStockData = [];
+                    mainEl.innerHTML = renderNoData();
+                    return;
                 }
 
                 const itemArray = Array.isArray(items) ? items : [items];
@@ -729,25 +829,25 @@
                 baseDateEl.textContent = formatDate(itemArray[0].basDt);
                 totalCountEl.textContent = formatNumber(body.totalCount);
                 statusEl.textContent = '정상';
-                statusEl.style.color = '#3fb950';
+                statusEl.className = 'stat-value success';
 
                 const { displayCount, sortBy } = getFilterSettings();
                 mainEl.innerHTML = renderTable(itemArray, displayCount, sortBy);
 
             } catch (error) {
-                statusEl.textContent = '오류';
-                statusEl.style.color = '#f85149';
+                console.error('Error:', error);
+                statusEl.textContent = '데이터 없음';
+                statusEl.className = 'stat-value';
                 baseDateEl.textContent = '-';
                 totalCountEl.textContent = '-';
                 currentStockData = [];
-                mainEl.innerHTML = renderError(error.message);
+                mainEl.innerHTML = renderNoData();
             } finally {
                 searchBtn.disabled = false;
                 searchBtn.textContent = '🔍 조회하기';
             }
         }
 
-        // 초기화
         function init() {
             const dateInput = document.getElementById('dateInput');
             const searchBtn = document.getElementById('searchBtn');
@@ -785,6 +885,7 @@
             displayCountSelect.addEventListener('change', reRenderTable);
             sortBySelect.addEventListener('change', reRenderTable);
 
+            // Auto-load yesterday's data
             const yesterday = getDaysAgo(1);
             dateInput.value = yesterday;
             loadData(yesterday);
@@ -794,4 +895,3 @@
     </script>
 </body>
 </html>
-
