@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KRX 주식 대시보드</title>
+    <meta name="description" content="한국거래소(KRX) 상장 주식 시세 정보를 조회할 수 있는 대시보드">
+    <meta name="keywords" content="KRX, 주식, 시세, 대시보드, KOSPI, KOSDAQ">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>">
+    <style>
+        :root {
+            --bg-dark: #0f1419;
+            --bg-card: #1c2128;
+            --border: #30363d;
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --accent-green: #3fb950;
+            --accent-red: #f85149;
+            --accent-blue: #58a6ff;
+            --accent-gold: #d4a72c;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--accent-gold), #f0c75e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .stats-bar {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .stat-value {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--accent-blue);
+        }
+
+        .date-picker-section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: var(--bg-card);
+            border-radius: 12px;
+            flex-wrap: wrap;
+        }
+
+        .date-picker-section label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .date-input {
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        .date-input:hover, .date-input:focus {
+            border-color: var(--accent-blue);
+            outline: none;
+        }
+
+        .search-btn {
+            padding: 0.75rem 1.5rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, var(--accent-gold), #f0c75e);
+            border: none;
+            border-radius: 8px;
+            color: var(--bg-dark);
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(212, 167, 44, 0.3);
+        }
+
+        .search-btn:active {
+            transform: translateY(0);
+        }
+
+        .search-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .quick-dates {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+
+        .quick-date-btn {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.75rem;
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .quick-date-btn:hover {
+            border-color: var(--accent-blue);
+            color: var(--accent-blue);
+        }
+
+        .filter-section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1.5rem;
+            margin-top: 1rem;
+            padding: 1rem 1.5rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 8px;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .filter-group label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .filter-select {
+            padding: 0.5rem 0.75rem;
+            font-size: 0.85rem;
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        .filter-select:hover, .filter-select:focus {
+            border-color: var(--accent-blue);
+            outline: none;
+        }
+
+        .filter-select option {
+            background: var(--bg-dark);
+            color: var(--text-primary);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 4rem;
+            color: var(--text-secondary);
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--border);
+            border-top-color: var(--accent-gold);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .error {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(248, 81, 73, 0.1);
+            border: 1px solid var(--accent-red);
+            border-radius: 8px;
+            color: var(--accent-red);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--bg-card);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        thead {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border);
+        }
+
+        th.right, td.right {
+            text-align: right;
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.9rem;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .rank {
+            font-weight: 700;
+            color: var(--accent-gold);
+            width: 50px;
+        }
+
+        .rank-1 { color: #ffd700; }
+        .rank-2 { color: #c0c0c0; }
+        .rank-3 { color: #cd7f32; }
+
+        .stock-name {
+            font-weight: 600;
+        }
+
+        .stock-code {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+
+        .market-tag {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .market-KOSPI {
+            background: rgba(88, 166, 255, 0.15);
+            color: var(--accent-blue);
+        }
+
+        .market-KOSDAQ {
+            background: rgba(212, 167, 44, 0.15);
+            color: var(--accent-gold);
+        }
+
+        .market-KONEX {
+            background: rgba(139, 148, 158, 0.15);
+            color: var(--text-secondary);
+        }
+
+        .price {
+            font-weight: 600;
+            font-family: 'SF Mono', Monaco, monospace;
+        }
+
+        .change {
+            font-family: 'SF Mono', Monaco, monospace;
+            font-weight: 500;
+        }
+
+        .positive {
+            color: var(--accent-green);
+        }
+
+        .negative {
+            color: var(--accent-red);
+        }
+
+        .neutral {
+            color: var(--text-secondary);
+        }
+
+        .volume {
+            font-family: 'SF Mono', Monaco, monospace;
+            color: var(--text-secondary);
+        }
+
+        .market-cap {
+            font-family: 'SF Mono', Monaco, monospace;
+            font-size: 0.85rem;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+
+        footer a {
+            color: var(--accent-blue);
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 900px) {
+            .container {
+                padding: 1rem;
+            }
+
+            th, td {
+                padding: 0.75rem 0.5rem;
+                font-size: 0.8rem;
+            }
+
+            .hide-mobile {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📊 KRX 주식 대시보드</h1>
+            <p class="subtitle">한국거래소 상장 주식 시세 정보</p>
+            <div class="date-picker-section">
+                <label for="dateInput">📅 조회 날짜:</label>
+                <input type="date" id="dateInput" class="date-input">
+                <button id="searchBtn" class="search-btn">🔍 조회하기</button>
+                <div class="quick-dates">
+                    <button class="quick-date-btn" data-days="0">오늘</button>
+                    <button class="quick-date-btn" data-days="1">어제</button>
+                    <button class="quick-date-btn" data-days="7">1주일 전</button>
+                    <button class="quick-date-btn" data-days="30">1개월 전</button>
+                    <button class="quick-date-btn" data-days="365">1년 전</button>
+                </div>
+                <div class="filter-section">
+                    <div class="filter-group">
+                        <label for="displayCount">📋 표시 개수:</label>
+                        <select id="displayCount" class="filter-select">
+                            <option value="50">50개</option>
+                            <option value="100">100개</option>
+                            <option value="150">150개</option>
+                            <option value="200">200개</option>
+                            <option value="250">250개</option>
+                            <option value="300">300개</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="sortBy">🔃 정렬 기준:</label>
+                        <select id="sortBy" class="filter-select">
+                            <option value="marketCap-desc">시가총액 높은순</option>
+                            <option value="marketCap-asc">시가총액 낮은순</option>
+                            <option value="price-desc">종가 높은순</option>
+                            <option value="price-asc">종가 낮은순</option>
+                            <option value="change-desc">등락률 높은순</option>
+                            <option value="change-asc">등락률 낮은순</option>
+                            <option value="volume-desc">거래량 많은순</option>
+                            <option value="volume-asc">거래량 적은순</option>
+                            <option value="name-asc">종목명 (ㄱ-ㅎ)</option>
+                            <option value="name-desc">종목명 (ㅎ-ㄱ)</option>
+                            <option value="market-asc">시장 (KONEX→KOSDAQ→KOSPI)</option>
+                            <option value="market-desc">시장 (KOSPI→KOSDAQ→KONEX)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="stats-bar">
+                <div class="stat-item">
+                    <div class="stat-label">조회일</div>
+                    <div class="stat-value" id="baseDate">-</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">데이터 수</div>
+                    <div class="stat-value" id="totalCount">-</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">상태</div>
+                    <div class="stat-value" id="status">날짜를 선택하세요</div>
+                </div>
+            </div>
+        </header>
+
+        <main id="main">
+            <div class="loading" style="padding: 4rem; text-align: center; color: var(--text-secondary);">
+                <p>📊 위에서 날짜를 선택하고 조회 버튼을 클릭하세요.</p>
+                <p style="margin-top: 0.5rem; font-size: 0.85rem;">또는 빠른 날짜 버튼을 사용하세요.</p>
+            </div>
+        </main>
+
+        <footer>
+            <p>데이터 출처: <a href="https://data.go.kr" target="_blank">공공데이터포털</a> - 금융위원회_주식시세정보</p>
+            <p>※ 본 데이터는 참고용이며, 투자 판단의 근거로 사용할 수 없습니다.</p>
+            <p style="margin-top: 1rem;">Made with ❤️ by <strong>Luke Lee</strong></p>
+        </footer>
+    </div>
+
+    <script>
+        // API 설정
+        const API_KEY = 'b6bb9c715523217634ed937f9007068217cdc3eff369d301787086b81def1493';
+        const BASE_URL = 'https://apis.data.go.kr/1160100/service/GetStockSecuritiesInfoService/getStockPriceInfo';
+
+        // 숫자 포맷팅
+        function formatNumber(num) {
+            return new Intl.NumberFormat('ko-KR').format(num);
+        }
+
+        // 시가총액 포맷팅 (억 단위)
+        function formatMarketCap(num) {
+            const billion = num / 100000000;
+            if (billion >= 10000) {
+                return (billion / 10000).toFixed(1) + '조';
+            }
+            return formatNumber(Math.round(billion)) + '억';
+        }
+
+        // 날짜 포맷팅
+        function formatDate(dateStr) {
+            if (!dateStr || dateStr.length !== 8) return dateStr;
+            return `${dateStr.slice(0, 4)}.${dateStr.slice(4, 6)}.${dateStr.slice(6, 8)}`;
+        }
+
+        // 변동률 클래스 결정
+        function getChangeClass(value) {
+            const num = parseFloat(value);
+            if (num > 0) return 'positive';
+            if (num < 0) return 'negative';
+            return 'neutral';
+        }
+
+        // 변동 표시 (+ 기호 추가)
+        function formatChange(value) {
+            const num = parseFloat(value);
+            if (num > 0) return '+' + formatNumber(num);
+            return formatNumber(num);
+        }
+
+        // 날짜를 YYYYMMDD 형식으로 변환
+        function dateToApiFormat(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}${month}${day}`;
+        }
+
+        // 오늘 날짜 가져오기 (YYYY-MM-DD 형식)
+        function getTodayString() {
+            const today = new Date();
+            return today.toISOString().split('T')[0];
+        }
+
+        // N일 전 날짜 가져오기
+        function getDaysAgo(days) {
+            const date = new Date();
+            date.setDate(date.getDate() - days);
+            return date.toISOString().split('T')[0];
+        }
+
+        // 주식 데이터 가져오기
+        async function fetchStockData(selectedDate) {
+            const params = new URLSearchParams({
+                serviceKey: API_KEY,
+                numOfRows: '3000',
+                pageNo: '1',
+                resultType: 'json'
+            });
+
+            if (selectedDate) {
+                const dateObj = new Date(selectedDate);
+                params.append('basDt', dateToApiFormat(dateObj));
+            }
+
+            try {
+                const response = await fetch(`${BASE_URL}?${params}`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                
+                if (data.response?.header?.resultCode !== '00') {
+                    throw new Error(data.response?.header?.resultMsg || 'API 오류');
+                }
+
+                return data.response.body;
+            } catch (error) {
+                console.error('Fetch error:', error);
+                throw error;
+            }
+        }
+
+        // 정렬 함수
+        function sortItems(items, sortBy) {
+            const [field, order] = sortBy.split('-');
+            const multiplier = order === 'desc' ? -1 : 1;
+
+            return [...items].sort((a, b) => {
+                let valueA, valueB;
+
+                switch (field) {
+                    case 'marketCap':
+                        valueA = parseInt(a.mrktTotAmt) || 0;
+                        valueB = parseInt(b.mrktTotAmt) || 0;
+                        break;
+                    case 'price':
+                        valueA = parseInt(a.clpr) || 0;
+                        valueB = parseInt(b.clpr) || 0;
+                        break;
+                    case 'change':
+                        valueA = parseFloat(a.fltRt) || 0;
+                        valueB = parseFloat(b.fltRt) || 0;
+                        break;
+                    case 'volume':
+                        valueA = parseInt(a.trqu) || 0;
+                        valueB = parseInt(b.trqu) || 0;
+                        break;
+                    case 'name':
+                        valueA = a.itmsNm || '';
+                        valueB = b.itmsNm || '';
+                        return multiplier * valueA.localeCompare(valueB, 'ko');
+                    case 'market':
+                        const marketOrder = { 'KONEX': 1, 'KOSDAQ': 2, 'KOSPI': 3 };
+                        valueA = marketOrder[a.mrktCtg] || 0;
+                        valueB = marketOrder[b.mrktCtg] || 0;
+                        break;
+                    default:
+                        valueA = parseInt(a.clpr) || 0;
+                        valueB = parseInt(b.clpr) || 0;
+                }
+
+                return multiplier * (valueA - valueB);
+            });
+        }
+
+        // 테이블 렌더링
+        function renderTable(items, displayCount, sortBy) {
+            const sortedItems = sortItems(items, sortBy).slice(0, displayCount);
+
+            const tableHTML = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>순위</th>
+                            <th>종목명</th>
+                            <th>시장</th>
+                            <th class="right">종가 (원)</th>
+                            <th class="right">전일대비</th>
+                            <th class="right">등락률</th>
+                            <th class="right hide-mobile">거래량</th>
+                            <th class="right hide-mobile">시가총액</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${sortedItems.map((item, index) => {
+                            const rank = index + 1;
+                            const rankClass = rank <= 3 ? `rank-${rank}` : '';
+                            const changeClass = getChangeClass(item.vs);
+                            
+                            return `
+                                <tr>
+                                    <td class="rank ${rankClass}">${rank}</td>
+                                    <td>
+                                        <div class="stock-name">${item.itmsNm}</div>
+                                        <div class="stock-code">${item.srtnCd}</div>
+                                    </td>
+                                    <td>
+                                        <span class="market-tag market-${item.mrktCtg}">${item.mrktCtg}</span>
+                                    </td>
+                                    <td class="right price">${formatNumber(item.clpr)}</td>
+                                    <td class="right change ${changeClass}">${formatChange(item.vs)}</td>
+                                    <td class="right change ${changeClass}">${parseFloat(item.fltRt) > 0 ? '+' : ''}${item.fltRt}%</td>
+                                    <td class="right volume hide-mobile">${formatNumber(item.trqu)}</td>
+                                    <td class="right market-cap hide-mobile">${formatMarketCap(item.mrktTotAmt)}</td>
+                                </tr>
+                            `;
+                        }).join('')}
+                    </tbody>
+                </table>
+            `;
+
+            return tableHTML;
+        }
+
+        // 에러 표시
+        function renderError(message) {
+            return `
+                <div class="error">
+                    <h3>⚠️ 데이터 로드 실패</h3>
+                    <p>${message}</p>
+                </div>
+            `;
+        }
+
+        // 로딩 표시
+        function showLoading() {
+            const mainEl = document.getElementById('main');
+            mainEl.innerHTML = `
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>전체 상장 주식 데이터를 불러오는 중...</p>
+                    <p style="font-size: 0.8rem; margin-top: 0.5rem;">약 3,000개 종목 로딩 중</p>
+                </div>
+            `;
+        }
+
+        // 전역 데이터 저장소
+        let currentStockData = [];
+
+        // 현재 필터 설정 가져오기
+        function getFilterSettings() {
+            return {
+                displayCount: parseInt(document.getElementById('displayCount').value),
+                sortBy: document.getElementById('sortBy').value
+            };
+        }
+
+        // 테이블 다시 렌더링 (필터 변경 시)
+        function reRenderTable() {
+            if (currentStockData.length === 0) return;
+            
+            const mainEl = document.getElementById('main');
+            const { displayCount, sortBy } = getFilterSettings();
+            mainEl.innerHTML = renderTable(currentStockData, displayCount, sortBy);
+        }
+
+        // 데이터 로드 및 렌더링
+        async function loadData(selectedDate) {
+            const mainEl = document.getElementById('main');
+            const statusEl = document.getElementById('status');
+            const baseDateEl = document.getElementById('baseDate');
+            const totalCountEl = document.getElementById('totalCount');
+            const searchBtn = document.getElementById('searchBtn');
+
+            searchBtn.disabled = true;
+            searchBtn.textContent = '⏳ 로딩중...';
+            statusEl.textContent = '로딩중...';
+            statusEl.style.color = 'var(--accent-blue)';
+            showLoading();
+
+            try {
+                const body = await fetchStockData(selectedDate);
+                const items = body.items?.item;
+
+                if (!items || items.length === 0) {
+                    throw new Error('해당 날짜의 데이터가 없습니다. 주말이나 공휴일은 데이터가 없을 수 있습니다.');
+                }
+
+                const itemArray = Array.isArray(items) ? items : [items];
+                currentStockData = itemArray;
+
+                baseDateEl.textContent = formatDate(itemArray[0].basDt);
+                totalCountEl.textContent = formatNumber(body.totalCount);
+                statusEl.textContent = '정상';
+                statusEl.style.color = '#3fb950';
+
+                const { displayCount, sortBy } = getFilterSettings();
+                mainEl.innerHTML = renderTable(itemArray, displayCount, sortBy);
+
+            } catch (error) {
+                statusEl.textContent = '오류';
+                statusEl.style.color = '#f85149';
+                baseDateEl.textContent = '-';
+                totalCountEl.textContent = '-';
+                currentStockData = [];
+                mainEl.innerHTML = renderError(error.message);
+            } finally {
+                searchBtn.disabled = false;
+                searchBtn.textContent = '🔍 조회하기';
+            }
+        }
+
+        // 초기화
+        function init() {
+            const dateInput = document.getElementById('dateInput');
+            const searchBtn = document.getElementById('searchBtn');
+            const quickDateBtns = document.querySelectorAll('.quick-date-btn');
+            const displayCountSelect = document.getElementById('displayCount');
+            const sortBySelect = document.getElementById('sortBy');
+
+            dateInput.value = getTodayString();
+            dateInput.max = getTodayString();
+
+            searchBtn.addEventListener('click', () => {
+                const selectedDate = dateInput.value;
+                if (selectedDate) {
+                    loadData(selectedDate);
+                } else {
+                    alert('날짜를 선택해주세요.');
+                }
+            });
+
+            dateInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    searchBtn.click();
+                }
+            });
+
+            quickDateBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const days = parseInt(btn.dataset.days);
+                    const targetDate = getDaysAgo(days);
+                    dateInput.value = targetDate;
+                    loadData(targetDate);
+                });
+            });
+
+            displayCountSelect.addEventListener('change', reRenderTable);
+            sortBySelect.addEventListener('change', reRenderTable);
+
+            const yesterday = getDaysAgo(1);
+            dateInput.value = yesterday;
+            loadData(yesterday);
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
+
