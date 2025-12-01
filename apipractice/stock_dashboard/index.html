@@ -89,6 +89,86 @@
             font-weight: 400;
         }
 
+        /* Index Cards */
+        .index-section {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin: 1.5rem 0;
+            flex-wrap: wrap;
+        }
+
+        .index-card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 1.25rem 2rem;
+            box-shadow: var(--shadow-md);
+            min-width: 200px;
+            text-align: center;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .index-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .index-card.kospi {
+            border-top: 3px solid var(--accent-blue);
+        }
+
+        .index-card.kosdaq {
+            border-top: 3px solid var(--accent-purple);
+        }
+
+        .index-name {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+
+        .index-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+        }
+
+        .index-change {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            margin-top: 0.5rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 100px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+        }
+
+        .index-change.up {
+            background: var(--accent-green-light);
+            color: var(--accent-green);
+        }
+
+        .index-change.down {
+            background: var(--accent-red-light);
+            color: var(--accent-red);
+        }
+
+        .index-change.neutral {
+            background: var(--border-light);
+            color: var(--text-muted);
+        }
+
+        .index-loading {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
         .control-panel {
             background: var(--bg-card);
             border-radius: 20px;
@@ -137,6 +217,30 @@
             border-color: var(--accent-blue);
             outline: none;
             box-shadow: 0 0 0 3px var(--accent-blue-light);
+        }
+
+        .day-indicator {
+            font-size: 0.9rem;
+            font-weight: 600;
+            padding: 0.25rem 0.5rem;
+            border-radius: 6px;
+            min-width: 2rem;
+            text-align: center;
+        }
+
+        .day-indicator.weekday {
+            color: var(--text-primary);
+            background: var(--border-light);
+        }
+
+        .day-indicator.saturday {
+            color: var(--accent-blue);
+            background: var(--accent-blue-light);
+        }
+
+        .day-indicator.sunday {
+            color: var(--accent-red);
+            background: var(--accent-red-light);
         }
 
         .search-btn {
@@ -513,6 +617,23 @@
                 <h1>KRX 주식 대시보드</h1>
             </div>
             <p class="subtitle">한국거래소 상장 주식 시세 정보</p>
+
+            <div class="index-section">
+                <div class="index-card kospi" id="kospiCard">
+                    <div class="index-name">KOSPI</div>
+                    <div class="index-value" id="kospiValue">-</div>
+                    <div class="index-change neutral" id="kospiChange">
+                        <span id="kospiChangeText">조회중...</span>
+                    </div>
+                </div>
+                <div class="index-card kosdaq" id="kosdaqCard">
+                    <div class="index-name">KOSDAQ</div>
+                    <div class="index-value" id="kosdaqValue">-</div>
+                    <div class="index-change neutral" id="kosdaqChange">
+                        <span id="kosdaqChangeText">조회중...</span>
+                    </div>
+                </div>
+            </div>
         </header>
 
         <div class="control-panel">
@@ -520,6 +641,7 @@
                 <div class="control-group">
                     <label for="dateInput">📅 날짜</label>
                     <input type="date" id="dateInput" class="date-input">
+                    <span id="dayIndicator" class="day-indicator weekday">(월)</span>
                 </div>
                 <div class="control-group">
                     <label for="displayCount">📋 표시</label>
@@ -591,6 +713,7 @@
     <script>
         const API_KEY = 'b6bb9c715523217634ed937f9007068217cdc3eff369d301787086b81def1493';
         const BASE_URL = 'https://apis.data.go.kr/1160100/service/GetStockSecuritiesInfoService/getStockPriceInfo';
+        const INDEX_URL = 'https://apis.data.go.kr/1160100/service/GetMarketIndexInfoService/getStockMarketIndex';
 
         function formatNumber(num) {
             return new Intl.NumberFormat('ko-KR').format(num);
@@ -620,6 +743,125 @@
             const num = parseFloat(value);
             if (num > 0) return '+' + formatNumber(num);
             return formatNumber(num);
+        }
+
+        // 요일 표시 업데이트
+        function updateDayIndicator(dateString) {
+            const dayIndicator = document.getElementById('dayIndicator');
+            if (!dateString || !dayIndicator) return;
+
+            const date = new Date(dateString);
+            const dayOfWeek = date.getDay(); // 0=일, 1=월, ..., 6=토
+            const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
+            const dayName = dayNames[dayOfWeek];
+
+            dayIndicator.textContent = `(${dayName})`;
+
+            // 클래스 초기화
+            dayIndicator.classList.remove('weekday', 'saturday', 'sunday');
+
+            if (dayOfWeek === 0) {
+                dayIndicator.classList.add('sunday');
+            } else if (dayOfWeek === 6) {
+                dayIndicator.classList.add('saturday');
+            } else {
+                dayIndicator.classList.add('weekday');
+            }
+        }
+
+        // 지수 데이터 가져오기
+        async function fetchIndexData(indexName, selectedDate) {
+            const params = new URLSearchParams({
+                serviceKey: API_KEY,
+                resultType: 'json',
+                numOfRows: '10',
+                pageNo: '1',
+                idxNm: indexName
+            });
+
+            if (selectedDate) {
+                const dateObj = new Date(selectedDate);
+                params.append('basDt', dateToApiFormat(dateObj));
+            }
+
+            try {
+                const response = await fetch(`${INDEX_URL}?${params}`);
+                if (response.status === 403) {
+                    return { error: 'unauthorized' };
+                }
+                if (!response.ok) return null;
+                
+                const data = await response.json();
+                if (data.response?.header?.resultCode !== '00') return null;
+                
+                const items = data.response.body.items?.item;
+                if (!items) return null;
+                
+                return Array.isArray(items) ? items[0] : items;
+            } catch (error) {
+                console.error('Index fetch error:', error);
+                return null;
+            }
+        }
+
+        // 지수 UI 업데이트
+        function updateIndexUI(elementId, data, error = null) {
+            const valueEl = document.getElementById(`${elementId}Value`);
+            const changeEl = document.getElementById(`${elementId}Change`);
+            const changeTextEl = document.getElementById(`${elementId}ChangeText`);
+
+            if (error === 'unauthorized') {
+                valueEl.textContent = '-';
+                changeEl.className = 'index-change neutral';
+                changeTextEl.textContent = '서비스 활성화 대기중';
+                return;
+            }
+
+            if (!data) {
+                valueEl.textContent = '-';
+                changeEl.className = 'index-change neutral';
+                changeTextEl.textContent = '데이터 없음';
+                return;
+            }
+
+            const value = parseFloat(data.clpr).toFixed(2);
+            const vs = parseFloat(data.vs);
+            const fltRt = parseFloat(data.fltRt);
+
+            valueEl.textContent = formatNumber(value);
+
+            let changeClass = 'neutral';
+            let arrow = '';
+            if (vs > 0) {
+                changeClass = 'up';
+                arrow = '▲';
+            } else if (vs < 0) {
+                changeClass = 'down';
+                arrow = '▼';
+            }
+
+            changeEl.className = `index-change ${changeClass}`;
+            changeTextEl.textContent = `${arrow} ${Math.abs(vs).toFixed(2)} (${fltRt > 0 ? '+' : ''}${fltRt}%)`;
+        }
+
+        // 지수 데이터 로드
+        async function loadIndexData(selectedDate) {
+            const [kospiData, kosdaqData] = await Promise.all([
+                fetchIndexData('코스피', selectedDate),
+                fetchIndexData('코스닥', selectedDate)
+            ]);
+
+            if (kospiData?.error) {
+                updateIndexUI('kospi', null, kospiData.error);
+            } else {
+                updateIndexUI('kospi', kospiData);
+            }
+
+            if (kosdaqData?.error) {
+                updateIndexUI('kosdaq', null, kosdaqData.error);
+            } else {
+                updateIndexUI('kosdaq', kosdaqData);
+            }
         }
 
         function dateToApiFormat(date) {
@@ -809,6 +1051,9 @@
             statusEl.className = 'stat-value';
             showLoading();
 
+            // 지수 데이터도 함께 로드
+            loadIndexData(selectedDate);
+
             try {
                 const body = await fetchStockData(selectedDate);
                 const items = body.items?.item;
@@ -857,6 +1102,12 @@
 
             dateInput.value = getTodayString();
             dateInput.max = getTodayString();
+            updateDayIndicator(dateInput.value);
+
+            // 날짜 변경 시 요일 업데이트
+            dateInput.addEventListener('change', () => {
+                updateDayIndicator(dateInput.value);
+            });
 
             searchBtn.addEventListener('click', () => {
                 const selectedDate = dateInput.value;
@@ -878,6 +1129,7 @@
                     const days = parseInt(btn.dataset.days);
                     const targetDate = getDaysAgo(days);
                     dateInput.value = targetDate;
+                    updateDayIndicator(targetDate);
                     loadData(targetDate);
                 });
             });
@@ -888,6 +1140,7 @@
             // Auto-load yesterday's data
             const yesterday = getDaysAgo(1);
             dateInput.value = yesterday;
+            updateDayIndicator(yesterday);
             loadData(yesterday);
         }
 

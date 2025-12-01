@@ -1,0 +1,387 @@
+
+
+
+
+
+공공데이터 오픈API 활용가이드
+금융위원회_지수시세정보
+
+
+
+
+
+
+
+
+
+
+
+
+
+1. 서비스 명세	3
+1.1 금융위원회_지수시세정보	3
+가. API 서비스 개요	3
+나. 상세기능 목록	4
+다. 상세기능내역	4
+1) 주가지수시세 상세기능명세	4
+2) 채권지수시세 상세기능명세	11
+3) 파생상품지수시세 상세기능명세	16
+2. OpenAPI 에러 코드정리	21
+
+ 
+1. 서비스 명세
+1.1 금융위원회_지수시세정보
+가. API 서비스 개요
+API 서비스 정보	API명(영문)	getMarketIndexInfoService
+	API명(국문)	금융위원회_지수시세정보
+	API 설명	한국거래소에서 제공하는 지수의 시세 정보로, 주가지수 시세, 채권지수시세, 파생상품지수시세에 대한 오퍼레이션을 제공한다.
+API 서비스
+보안적용
+기술 수준	서비스 인증/권한	[O] serviceKey    [ ] 인증서 (GPKI/NPKI)
+[ ] Basic (ID/PW)  [ ] 없음
+	메시지 레벨
+암호화	[ ] 전자서명   [ ] 암호화   [O] 없음
+	전송 레벨 암호화	[O] SSL   [ ] 없음
+	인터페이스 표준	[ ] SOAP 1.2
+(RPC-Encoded, Document Literal, Document Literal Wrapped)
+[O] REST (GET)
+[ ] RSS 1.0   [ ] RSS 2.0   [ ] Atom 1.0   [ ] 기타
+	교환 데이터 표준
+(중복선택가능)	[O] XML   [O] JSON   [ ] MIME   [ ] MTOM
+API 서비스
+배포정보	서비스 URL	https://apis.data.go.kr/1160100/service/GetMarketIndexInfoService
+	서비스 명세 URL
+(WSDL 또는 WADL)	N/A
+	서비스 버전	1.0
+	서비스 시작일	2021-11-16	서비스 배포일	2021-11-16
+	서비스 이력	2021-11-16 : 서비스 시작
+	메시지 교환유형	[O] Request-Response   [ ] Publish-Subscribe
+[ ] Fire-and-Forgot   [ ] Notification
+	서비스 제공자	
+	데이터 갱신주기	일 1회
+
+나. 상세기능 목록
+번호	API명(국문)	상세기능명(영문)	상세기능명(국문)
+1	금융위원회_지수시세정보	getStockMarketIndex	주가지수시세
+2	금융위원회_지수시세정보	getBondMarketIndex	채권지수시세
+3	금융위원회_지수시세정보	getDerivationProductMarketIndex	파생상품지수시세
+
+* 지수명 변경 안내
+- 2024년 12월 6일 이후, 일부 지수명이 다음과 같이 변경되었습니다.
+ 서비스 활용 시 참고해 주세요.
+
+KOSPI
+변경 전	변경 후
+음식료품	음식료·담배
+섬유의복	섬유·의류
+의약품	제약
+비금속광물	비금속
+철강금속	금속
+의료정밀	의료·정밀기기
+기계	기계·장비
+운수장비	운송장비·부품
+운수창고업	운송·창고
+
+KOSDAQ
+변경 전	변경 후
+일반전기전자	전기전자
+전기·가스·수도	전기·가스
+운송	운송·창고
+
+
+
+
+
+다. 상세기능내역
+1) 주가지수시세 상세기능명세
+a) 상세기능정보
+상세기능 번호	1	상세기능 유형	조회 (목록)
+상세기능명(국문)	주가지수시세
+상세기능 설명	KRX300, 코스피, 코스닥 등 주가지수 시세 조회 기능
+Call Back URL	https://apis.data.go.kr/1160100/service/GetMarketIndexInfoService/getStockMarketIndex
+최대 메시지 사이즈	[4000] byte
+평균 응답 시간	[500] ms	초당 최대 트랙잭션	[30] tps
+b) 요청 메시지 명세 
+항목명(영문)	항목명(국문)	항목크기	항목구분	샘플데이터	항목설명
+numOfRows	한 페이지 결과 수	4	0	1	한 페이지 결과 수
+pageNo	페이지 번호	4	0	1	페이지 번호
+resultType	결과형식	4	0	xml	구분(xml, json) Default: xml
+serviceKey	서비스키	400	1	공공데이터포털에서 받은 인증키	공공데이터포털에서 받은 인증키
+basDt	기준일자	8	0	20240731	검색값과 기준일자가 일치하는 데이터를 검색
+beginBasDt	기준일자	8	0		기준일자가 검색값보다 크거나 같은 데이터를 검색
+endBasDt	기준일자	8	0		기준일자가 검색값보다 작은 데이터를 검색
+likeBasDt	기준일자	8	0		기준일자값이 검색값을 포함하는 데이터를 검색
+idxNm	지수명	240	0	코스피	검색값과 지수명이 일치하는 데이터를 검색
+likeIdxNm	지수명	240	0		지수명이 검색값을 포함하는 데이터를 검색
+beginEpyItmsCnt	채용종목 수	15	0		채용종목 수가 검색값보다 크거나 같은 데이터를 검색
+endEpyItmsCnt	채용종목 수	15	0		채용종목 수가 검색값보다 작은 데이터를 검색
+beginFltRt	등락률	11	0		등락률이 검색값보다 크거나 같은 데이터를 검색
+endFltRt	등락률	11	0		등락률이 검색값보다 작은 데이터를 검색
+beginTrqu	거래량	12	0		거래량이 검색값보다 크거나 같은 데이터를 검색
+endTrqu	거래량	12	0		거래량이 검색값보다 작은 데이터를 검색
+beginTrPrc	거래대금	21	0		거래대금이 검색값보다 크거나 같은 데이터를 검색
+endTrPrc	거래대금	21	0		거래대금이 검색값보다 작은 데이터를 검색
+beginLstgMrktTotAmt	상장시가총액	21	0		상장시가총액이 검색값보다 크거나 같은 데이터를 검색
+endLstgMrktTotAmt	상장시가총액	21	0		상장시가총액이 검색값보다 작은 데이터를 검색
+beginLsYrEdVsFltRg	전년말대비_등락폭	10	0		전년말대비_등락폭이 검색값보다 크거나 같은 데이터를 검색
+endLsYrEdVsFltRg	전년말대비_등락폭	10	0		전년말대비_등락폭이 검색값보다 작은 데이터를 검색
+beginLsYrEdVsFltRt	전년말대비_등락률	11	0		전년말대비_등락률이 검색값보다 크거나 같은 데이터를 검색
+endLsYrEdVsFltRt	전년말대비_등락률	11	0		전년말대비_등락률이 검색값보다 작은 데이터를 검색
+※ 항목구분 : 필수(1), 옵션(0) 
+c) 응답 메시지 명세
+항목명(영문)	항목명(국문)	항목크기	항목구분	샘플데이터	항목설명
+resultCode	결과코드	2	1	00	결과코드
+resultMsg	결과메시지	50	1	NORMAL SERVICE.	결과메시지
+numOfRows	한 페이지 결과 수	4	1	1	한 페이지 결과 수
+pageNo	페이지 번호	4	1	1	페이지 번호
+totalCount	전체 결과 수	10	1	1	전체 결과 수
+lsYrEdVsFltRt	전년말대비_
+등락률	11	0	4.35	지수의 전년말대비 등락율
+basPntm	기준시점	8	0	19800104	지수를 산출하기 위한 기준시점
+basIdx	기준지수	12	0	100	기준시점의 지수값
+basDt	기준일자	8	0	20240731	기준일자
+idxCsf	지수분류명	240	0	KOSPI시리즈	지수의 분류명칭
+idxNm	지수명	240	0	코스피	지수의 명칭
+epyItmsCnt	채용종목 수	15	0	839	지수가 채용한 종목 수
+clpr	종가	12	0	2770.69	정규시장의 매매시간
+종료시까지 형성되는 최종가격
+vs	대비	10	0	32.5	전일 대비 등락
+fltRt	등락률	11	0	1.19	전일 대비 등락에 따른 비율
+mkp	시가	12	0	2745.58	정규시장의 매매시간
+개시 후 형성되는 최초가격
+hipr	고가	12	0	2770.7	하루 중 지수의 최고치
+lopr	저가	12	0	2733.63	하루 중 지수의 최저치
+trqu	거래량	12	0	557090057	지수에 포함된 종목의 거래량 총합
+trPrc	거래대금	21	0	12197991898146	지수에 포함된 종목의 거래대금 총합
+lstgMrktTotAmt	상장시가총액	21	0	2262832341048634	지수에 포함된 종목의 시가총액
+lsYrEdVsFltRg	전년말대비_
+등락폭	10	0	115	지수의 전년말대비 등락폭
+yrWRcrdHgst	연중기록최고	12	0	2891.35	지수의 연중최고치
+yrWRcrdHgstDt	연중기록최고
+일자	8	0	20240711	지수가 연중최고치를 기록한 날짜
+yrWRcrdLwst	연중기록최저	12	0	0	지수의 연중최저치
+yrWRcrdLwstDt	연중기록최저
+일자	8	0	20240801	지수가 연중최저치를 기록한 날짜
+※ 항목구분 : 필수(1), 옵션(0)
+d) 요청/응답 메시지 예제
+요청메시지
+https://apis.data.go.kr/1160100/service/GetMarketIndexInfoService/getStockMarketIndex?serviceKey=인증키&resultType=xml&pageNo=1&numOfRows=1
+응답메시지
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<response>
+    <header>
+        <resultCode>00</resultCode>
+        <resultMsg>NORMAL SERVICE.</resultMsg>
+    </header>
+    <body>
+        <numOfRows>1</numOfRows>
+        <pageNo>1</pageNo>
+        <totalCount>1</totalCount>
+        <items>
+            <item>
+<basDt>20240731</basDt>
+<idxNm>코스피</idxNm>
+<idxCsf>KOSPI시리즈</idxCsf>
+<epyItmsCnt>839</epyItmsCnt>
+<clpr>2770.69</clpr>
+<vs>32.5</vs>
+<fltRt>1.19</fltRt>
+<mkp>2745.58</mkp>
+<hipr>2770.7</hipr>
+<lopr>2733.63</lopr>
+<trqu>557090057</trqu>
+<trPrc>12197991898146</trPrc>
+<lstgMrktTotAmt>2262832341048634</lstgMrktTotAmt>
+<lsYrEdVsFltRg>115</lsYrEdVsFltRg>
+<lsYrEdVsFltRt>4.35</lsYrEdVsFltRt>
+<yrWRcrdHgst>2891.35</yrWRcrdHgst>
+<yrWRcrdHgstDt>20240711</yrWRcrdHgstDt>
+<yrWRcrdLwst>0</yrWRcrdLwst>
+<yrWRcrdLwstDt>20240801</yrWRcrdLwstDt>
+<basPntm>19800104</basPntm>
+<basIdx>100</basIdx> 
+        </items>
+    </body>
+</response>
+
+ 
+2) 채권지수시세 상세기능명세
+a) 상세기능정보
+상세기능 번호	2	상세기능 유형	조회 (목록)
+상세기능명(국문)	채권지수 시세
+상세기능 설명	채권지수 시세 조회 기능
+Call Back URL	https://apis.data.go.kr/1160100/service/GetMarketIndexInfoService/getBondMarketIndex
+최대 메시지 사이즈	[4000] byte
+평균 응답 시간	[500] ms	초당 최대 트랙잭션	[30] tps
+b) 요청 메시지 명세 
+항목명(영문)	항목명(국문)	항목크기	항목구분	샘플데이터	항목설명
+numOfRows	한 페이지 결과 수	4	0	1	한 페이지 결과 수
+pageNo	페이지 번호	4	0	1	페이지 번호
+resultType	결과형식	4	0	xml	구분(xml, json) Default: xml
+serviceKey	서비스키	400	1	공공데이터포털에서 받은 인증키	공공데이터포털에서 받은 인증키
+basDt	기준일자	8	0	20240731	검색값과 기준일자가 일치하는 데이터를 검색
+beginBasDt	기준일자	8	0		기준일자가 검색값보다 크거나 같은 데이터를 검색
+endBasDt	기준일자	8	0		기준일자가 검색값보다 작은 데이터를 검색
+likeBasDt	기준일자	8	0		기준일자값이 검색값을 포함하는 데이터를 검색
+idxNm	지수명	240	0	KRX 채권지수	검색값과 지수명이 일치하는 데이터를 검색
+likeIdxNm	지수명	240	0		지수명이 검색값을 포함하는 데이터를 검색
+beginTotBnfIdxVs	총수익지수 대비	10	0		총수익지수 대비가 검색값보다 크거나 같은 데이터를 검색
+endTotBnfIdxVs	총수익지수 대비	10	0		총수익지수 대비가 검색값보다 작은 데이터를 검색
+beginNPrcIdxVs	순가격지수 대비	10	0		순가격지수 대비가 검색값보다 크거나 같은 데이터를 검색
+endNPrcIdxVs	순가격지수 대비	10	0		순가격지수 대비가검색값보다 작은 데이터를 검색
+beginDurt	듀레이션	15	0		듀레이션이 검색값보다 크거나 같은 데이터를 검색
+endDurt	듀레이션	15	0		듀레이션이 검색값보다 작은 데이터를 검색
+beginCnvt	컨벡시티	15	0		컨벡시티이 검색값보다 크거나 같은 데이터를 검색
+endCnvt	컨벡시티	15	0		컨벡시티이 검색값보다 작은 데이터를 검색
+beginYtm	YTM	15	0		YTM이 검색값보다 크거나 같은 데이터를 검색
+endYtm	YTM	15	0		YTM이 검색값보다 작은 데이터를 검색
+※ 항목구분 : 필수(1), 옵션(0) 
+c) 응답 메시지 명세
+항목명(영문)	항목명(국문)	항목크기	항목구분	샘플데이터	항목설명
+resultCode	결과코드	2	1	00	결과코드
+resultMsg	결과메시지	50	1	NORMAL SERVICE.	결과메시지
+numOfRows	한 페이지 결과 수	4	1	1	한 페이지 결과 수
+pageNo	페이지 번호	4	1	1	페이지 번호
+totalCount	전체 결과 수	10	1	1	전체 결과 수
+basDt	기준일자	8	0	20240731	기준일자
+idxNm	지수명	240	0	KRX 채권지수	지수의 명칭
+totBnfIdxClpr	총수익지수 종가	15	0	195.54	채권지수의 총수익지수 종가
+totBnfIdxVs	총수익지수 대비	10	0	-.03	채권 지수의 총수익지수 전일 대비 증감
+nPrcIdxClpr	순가격지수 종가	15	0	102.43	채권지수의 순가격지수 종가
+nPrcIdxVs	순가격지수 대비	10	0	-.02	채권지수의 순가격지수 전일 대비 증감
+zrRinvIdxClpr	제로재투자지수 종가	15	0	188.89	채권지수의 제로재투자지수 종가
+zrRinvIdxVs	제로재투자지수 대비	10	0	-.03	채권지수의 제로재투자지수 전일 대비 증감
+clRinvIdxClpr	콜재투자지수 종가	15	0	194.27	채권지수의 콜재투자지수 종가
+clRinvIdxVs	콜재투자지수 대비	10	0	-.03	채권지수의 콜재투자지수 전일 대비 증감
+mrktPrcIdxClpr	시장가격지수 종가	15	0	103.23	채권지수의 시장가격지수 종가
+mrktPrcIdxVs	시장가격지수 대비	10	0	-.02	채권지수의 시장가격지수 전일 대비 증감
+durt	듀레이션	15	0	5.495	채권지수의 투자자금의 평균회수기간
+cnvt	컨벡시티	15	0	87.653	채권 지수의 볼록성
+ytm	YTM	15	0	3.178	채권지수의 만기수익률
+※ 항목구분 : 필수(1), 옵션(0)
+d) 요청/응답 메시지 예제
+요청메시지
+https://apis.data.go.kr/1160100/service/GetMarketIndexInfoService/getBondMarketIndex?serviceKey=인증키&numOfRows=1&pageNo=1&resultType=xml
+응답메시지
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<response>
+    <header>
+        <resultCode>00</resultCode>
+        <resultMsg>NORMAL SERVICE.</resultMsg>
+    </header>
+    <body>
+        <numOfRows>1</numOfRows>
+        <pageNo>1</pageNo>
+        <totalCount>1</totalCount>
+        <items>
+            <item>
+                <basDt> 20240731 </basDt>
+                <idxNm>KRX 채권지수</idxNm>
+ 		<totBnfIdxClpr>195.54</totBnfIdxClpr>
+			<totBnfIdxVs>-.03</totBnfIdxVs>
+			<nPrcIdxClpr>102.43</nPrcIdxClpr>
+			<nPrcIdxVs>-.02</nPrcIdxVs>
+			<zrRinvIdxClpr>188.89</zrRinvIdxClpr>
+			<zrRinvIdxVs>-.03</zrRinvIdxVs>
+			<clRinvIdxClpr>194.27</clRinvIdxClpr>
+			<clRinvIdxVs>-.03</clRinvIdxVs>
+			<mrktPrcIdxClpr>103.23</mrktPrcIdxClpr>
+			<mrktPrcIdxVs>-.02</mrktPrcIdxVs>
+			<durt>5.495</durt>
+			<cnvt>87.653</cnvt>
+			<ytm>3.178</ytm> </item>
+        </items>
+    </body>
+</response>
+
+3) 파생상품지수시세 상세기능명세
+a) 상세기능정보
+상세기능 번호	3	상세기능 유형	조회 (목록)
+상세기능명(국문)	파생상품지수시세
+상세기능 설명	코스피200 등 파생상품지수 시세 조회 기능
+Call Back URL	https://apis.data.go.kr/1160100/service/GetMarketIndexInfoService/getDerivationProductMarketIndex
+최대 메시지 사이즈	[4000] byte
+평균 응답 시간	[500] ms	초당 최대 트랙잭션	[30] tps
+b) 요청 메시지 명세 
+항목명(영문)	항목명(국문)	항목크기	항목구분	샘플데이터	항목설명
+numOfRows	한 페이지 결과 수	4	0	1	한 페이지 결과 수
+pageNo	페이지 번호	4	0	1	페이지 번호
+resultType	결과형식	4	0	xml	구분(xml, json) Default: xml
+serviceKey	서비스키	400	1	공공데이터포털에서 받은 인증키	공공데이터포털에서 받은 인증키
+basDt	기준일자	8	0	20240603	검색값과 기준일자가 일치하는 데이터를 검색
+beginBasDt	기준일자	8	0		기준일자가 검색값보다 크거나 같은 데이터를 검색
+endBasDt	기준일자	8	0		기준일자가 검색값보다 작은 데이터를 검색
+likeBasDt	기준일자	8	0		기준일자값이 검색값을 포함하는 데이터를 검색
+idxNm	지수명	240	0	10년국채선물 인버스지수	검색값과 지수명이 일치하는 데이터를 검색
+likeIdxNm	지수명	240	0		지수명이 검색값을 포함하는 데이터를 검색
+beginVs	대비	10	0		대비가 검색값보다 크거나 같은 데이터를 검색
+endVs	대비	10	0		대비가 검색값보다 작은 데이터를 검색
+beginFltRt	등락률	11	0		등락률이 검색값보다 크거나 같은 데이터를 검색
+endFltRt	등락률	11	0		등락률이 검색값보다 작은 데이터를 검색
+beginTrqu	거래량	12	0		거래량이 검색값보다 크거나 같은 데이터를 검색
+endTrqu	거래량	12	0		거래량이 검색값보다 작은 데이터를 검색
+beginTrPrc	거래대금	21	0		거래대금이 검색값보다 크거나 같은 데이터를 검색
+endTrPrc	거래대금	21	0		거래대금이 검색값보다 작은 데이터를 검색
+※ 항목구분 : 필수(1), 옵션(0) 
+c) 응답 메시지 명세
+항목명(영문)	항목명(국문)	항목크기	항목구분	샘플데이터	항목설명
+resultCode	결과코드	2	1	00	결과코드
+resultMsg	결과메시지	50	1	NORMAL SERVICE.	결과메시지
+numOfRows	한 페이지 결과 수	4	1	1	한 페이지 결과 수
+pageNo	페이지 번호	4	1	1	페이지 번호
+totalCount	전체 결과 수	10	1	1	전체 결과 수
+basDt	기준일자	8	0	20240603	기준일자
+idxNm	지수명	240	0	10년국채선물 인버스지수	지수의 명칭
+vs	대비	10	0	-3.8	전일 대비 등락
+fltRt	등락률	11	0	-.32	전일 대비 등락에 따른 비율
+mkp	시가	12	0	1185.81	정규시장의 매매시간
+개시 후 형성되는 최초가격
+hipr	고가	12	0	1186.34	하루 중 지수의 최고치
+lopr	저가	12	0	1183.26	하루 중 지수의 최저치
+trqu	거래량	12	0	0	지수에 포함된 종목의 거래량 총합
+trPrc	거래대금	21	0	0	지수에 포함된 종목의 거래대금 총합
+※ 항목구분 : 필수(1), 옵션(0)
+d) 요청/응답 메시지 예제
+요청메시지
+https://apis.data.go.kr/1160100/service/GetMarketIndexInfoService/getDerivationProductMarketIndex?serviceKey=인증키&numOfRows=1&pageNo=1&resultType=xml
+응답메시지
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<response>
+    <header>
+        <resultCode>00</resultCode>
+        <resultMsg>NORMAL SERVICE.</resultMsg>
+    </header>
+    <body>
+        <numOfRows>1</numOfRows>
+        <pageNo>1</pageNo>
+        <totalCount>1</totalCount>
+        <items>
+            <item>
+                <basDt> 20240603 </basDt>
+                <idxNm>10년국채선물 인버스지수 </idxNm>
+			<clpr>1184.43</clpr>
+			<vs>-3.8</vs>
+			<fltRt>-.32</fltRt>
+			<mkp>1185.81</mkp>
+			<hipr>1186.34</hipr>
+			<lopr>1183.26</lopr>
+			<trqu>0</trqu>
+			<trPrc>0</trPrc> </item>
+        </items>
+    </body>
+</response>
+2. OpenAPI 에러 코드정리
+에러코드	에러메시지	설명
+1	APPLICATION_ERROR	어플리케이션 에러
+10	INVALID_REQUEST_PARAMETER_ERROR	잘못된 요청 파라메터 에러
+12	NO_OPENAPI_SERVICE_ERROR	해당 오픈API서비스가 없거나 폐기됨
+20	SERVICE_ACCESS_DENIED_ERROR	서비스 접근거부
+22	LIMITED_NUMBER_OF_SERVICE_REQUESTS_EXCEEDS_ERROR	서비스 요청제한횟수 초과에러
+30	SERVICE_KEY_IS_NOT_REGISTERED_ERROR	등록되지 않은 서비스키
+31	DEADLINE_HAS_EXPIRED_ERROR	기한 만료된 서비스키
+32	UNREGISTERED_IP_ERROR	등록되지 않은 IP
+99	UNKNOWN_ERROR	기타에러
+
