@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>광주광역시 서구 음식점</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        h1 {
+            color: #e94560;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(233, 69, 96, 0.3);
+        }
+
+        .subtitle {
+            color: #a0a0a0;
+            font-size: 1rem;
+            font-weight: 300;
+        }
+
+        .api-info {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(233, 69, 96, 0.3);
+            border-radius: 12px;
+            padding: 15px 20px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .api-info span {
+            color: #7f8c8d;
+            font-size: 0.85rem;
+        }
+
+        .api-info strong {
+            color: #e94560;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 60px;
+            color: #e94560;
+        }
+
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border: 3px solid rgba(233, 69, 96, 0.3);
+            border-top-color: #e94560;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 15px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .restaurant-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+        }
+
+        .restaurant-card {
+            background: linear-gradient(145deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .restaurant-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, #e94560, #ff6b6b);
+        }
+
+        .restaurant-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(233, 69, 96, 0.5);
+            box-shadow: 0 20px 40px rgba(233, 69, 96, 0.2);
+        }
+
+        .card-number {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: rgba(233, 69, 96, 0.15);
+        }
+
+        .restaurant-name {
+            color: #ffffff;
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            padding-right: 50px;
+        }
+
+        .restaurant-info {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .info-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .info-label {
+            color: #e94560;
+            font-size: 0.75rem;
+            font-weight: 500;
+            min-width: 60px;
+            padding: 3px 8px;
+            background: rgba(233, 69, 96, 0.15);
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .info-value {
+            color: #c0c0c0;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .error {
+            text-align: center;
+            padding: 60px;
+            color: #e94560;
+            background: rgba(233, 69, 96, 0.1);
+            border-radius: 16px;
+            border: 1px solid rgba(233, 69, 96, 0.3);
+        }
+
+        .error h3 {
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+
+        .error p {
+            color: #a0a0a0;
+            font-size: 0.9rem;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #7f8c8d;
+            font-size: 0.85rem;
+        }
+
+        footer a {
+            color: #e94560;
+            text-decoration: none;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .restaurant-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .api-info {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🍽️ 광주광역시 서구 음식점</h1>
+            <p class="subtitle">공공데이터포털 Open API 활용</p>
+        </header>
+
+        <div class="api-info">
+            <span>📡 데이터 출처: <strong>공공데이터포털</strong></span>
+            <span>📅 데이터 버전: <strong>20241213</strong></span>
+            <span>📊 표시 개수: <strong>10개</strong></span>
+        </div>
+
+        <div id="restaurant-container">
+            <div class="loading">데이터를 불러오는 중입니다</div>
+        </div>
+
+        <footer>
+            <p>데이터 제공: <a href="https://www.data.go.kr" target="_blank">공공데이터포털</a> | 광주광역시 서구</p>
+        </footer>
+    </div>
+
+    <script>
+        const API_KEY = 'b6bb9c715523217634ed937f9007068217cdc3eff369d301787086b81def1493';
+        const BASE_URL = 'https://api.odcloud.kr/api/3083730/v1/uddi:23334aed-6188-4b13-8a48-f057540c55a5';
+
+        async function fetchRestaurants() {
+            const container = document.getElementById('restaurant-container');
+            
+            try {
+                const url = `${BASE_URL}?page=1&perPage=10&serviceKey=${API_KEY}`;
+                console.log('API 호출 URL:', url);
+                
+                const response = await fetch(url);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP 오류: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                console.log('API 응답 (상세):', JSON.stringify(result, null, 2));
+                
+                // 데이터 구조 확인 및 처리
+                let restaurants = null;
+                if (result.data && Array.isArray(result.data)) {
+                    restaurants = result.data;
+                } else if (Array.isArray(result)) {
+                    restaurants = result;
+                } else if (result.items && Array.isArray(result.items)) {
+                    restaurants = result.items;
+                }
+                
+                console.log('추출된 레스토랑 데이터:', restaurants);
+                
+                if (restaurants && restaurants.length > 0) {
+                    displayRestaurants(restaurants);
+                } else {
+                    container.innerHTML = `
+                        <div class="error">
+                            <h3>😅 데이터가 없습니다</h3>
+                            <p>음식점 데이터를 찾을 수 없습니다.</p>
+                            <p style="margin-top: 10px; font-size: 0.8rem; color: #666;">응답 구조: ${JSON.stringify(Object.keys(result))}</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('API 호출 오류:', error);
+                container.innerHTML = `
+                    <div class="error">
+                        <h3>⚠️ 데이터를 불러올 수 없습니다</h3>
+                        <p>오류: ${error.message}</p>
+                        <p style="margin-top: 10px;">CORS 정책으로 인해 브라우저에서 직접 호출이 제한될 수 있습니다.</p>
+                        <p>로컬 서버를 통해 실행하거나 프록시 서버를 사용해보세요.</p>
+                    </div>
+                `;
+            }
+        }
+
+        function displayRestaurants(restaurants) {
+            const container = document.getElementById('restaurant-container');
+            
+            const html = `
+                <div class="restaurant-grid">
+                    ${restaurants.map((restaurant, index) => `
+                        <div class="restaurant-card">
+                            <span class="card-number">${String(index + 1).padStart(2, '0')}</span>
+                            <h2 class="restaurant-name">${restaurant['업소명'] || '이름 없음'}</h2>
+                            <div class="restaurant-info">
+                                <div class="info-row">
+                                    <span class="info-label">업종</span>
+                                    <span class="info-value">${restaurant['업종명'] || '-'}</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">대표자</span>
+                                    <span class="info-value">${restaurant['영업자명'] || '-'}</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">주소</span>
+                                    <span class="info-value">${restaurant['소재지(도로명)'] || '-'}</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">전화</span>
+                                    <span class="info-value">${restaurant['소재지전화번호'] || '-'}</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">면적</span>
+                                    <span class="info-value">${restaurant['면적'] ? restaurant['면적'] + '㎡' : '-'}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            
+            container.innerHTML = html;
+        }
+
+        // 페이지 로드 시 데이터 불러오기
+        document.addEventListener('DOMContentLoaded', fetchRestaurants);
+    </script>
+</body>
+</html>
+

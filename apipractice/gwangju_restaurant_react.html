@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>광주광역시 서구 음식점 - React</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #ff6b35;
+            --primary-dark: #e55a2b;
+            --secondary: #004e89;
+            --dark: #0a0a0f;
+            --dark-lighter: #12121a;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --text-primary: #ffffff;
+            --text-secondary: #8b8b9a;
+            --border: rgba(255, 255, 255, 0.08);
+        }
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background: var(--dark);
+            min-height: 100vh;
+            color: var(--text-primary);
+        }
+
+        /* 배경 효과 */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(255, 107, 53, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(0, 78, 137, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(255, 107, 53, 0.03) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .app-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 60px 30px;
+        }
+
+        /* 헤더 */
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .header-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        .header h1 {
+            font-size: 3.5rem;
+            font-weight: 900;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #fff 0%, #ccc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            font-weight: 300;
+        }
+
+        /* 통계 바 */
+        .stats-bar {
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+            margin-bottom: 50px;
+            padding: 25px 40px;
+            background: var(--dark-lighter);
+            border-radius: 16px;
+            border: 1px solid var(--border);
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 5px;
+        }
+
+        /* 로딩 */
+        .loading-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 100px;
+        }
+
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        .loading-text {
+            margin-top: 20px;
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* 그리드 */
+        .restaurant-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            margin-bottom: 50px;
+        }
+
+        /* 카드 */
+        .restaurant-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 28px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .restaurant-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .restaurant-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--primary);
+            box-shadow: 
+                0 20px 40px rgba(255, 107, 53, 0.15),
+                0 0 0 1px rgba(255, 107, 53, 0.1);
+        }
+
+        .restaurant-card:hover::before {
+            opacity: 1;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .card-number {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--primary);
+            background: rgba(255, 107, 53, 0.1);
+            padding: 5px 12px;
+            border-radius: 20px;
+        }
+
+        .card-type {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            background: var(--dark);
+            padding: 5px 12px;
+            border-radius: 20px;
+        }
+
+        .restaurant-name {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            line-height: 1.3;
+            color: var(--text-primary);
+        }
+
+        .info-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .info-icon {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 107, 53, 0.1);
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+
+        .info-content {
+            flex: 1;
+        }
+
+        .info-label {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-value {
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            margin-top: 2px;
+        }
+
+        /* 더보기 버튼 */
+        .load-more-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .load-more-btn {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
+            padding: 18px 60px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Noto Sans KR', sans-serif;
+            box-shadow: 0 10px 30px rgba(255, 107, 53, 0.3);
+        }
+
+        .load-more-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(255, 107, 53, 0.4);
+        }
+
+        .load-more-btn:active {
+            transform: translateY(0);
+        }
+
+        .load-more-btn:disabled {
+            background: var(--dark-lighter);
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .remaining-count {
+            display: block;
+            margin-top: 15px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* 완료 메시지 */
+        .all-loaded {
+            text-align: center;
+            padding: 30px;
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        .all-loaded-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        /* 푸터 */
+        .footer {
+            text-align: center;
+            margin-top: 60px;
+            padding-top: 40px;
+            border-top: 1px solid var(--border);
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        .footer a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        /* 에러 */
+        .error-container {
+            text-align: center;
+            padding: 80px 40px;
+            background: var(--dark-lighter);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 100, 100, 0.3);
+        }
+
+        .error-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+
+        .error-title {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: #ff6b6b;
+        }
+
+        .error-message {
+            color: var(--text-secondary);
+        }
+
+        /* 카드 진입 애니메이션 */
+        .card-enter {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: cardEnter 0.5s ease forwards;
+        }
+
+        @keyframes cardEnter {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 반응형 */
+        @media (max-width: 1200px) {
+            .restaurant-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.2rem;
+            }
+
+            .restaurant-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-bar {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .app-container {
+                padding: 30px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        const API_KEY = 'b6bb9c715523217634ed937f9007068217cdc3eff369d301787086b81def1493';
+        const BASE_URL = 'https://api.odcloud.kr/api/3083730/v1/uddi:23334aed-6188-4b13-8a48-f057540c55a5';
+        const ITEMS_PER_PAGE = 12;
+
+        // 로딩 컴포넌트
+        const Loading = () => (
+            <div className="loading-container">
+                <div className="loading-spinner"></div>
+                <p className="loading-text">맛있는 음식점을 찾고 있습니다...</p>
+            </div>
+        );
+
+        // 에러 컴포넌트
+        const Error = ({ message }) => (
+            <div className="error-container">
+                <div className="error-icon">⚠️</div>
+                <h3 className="error-title">데이터를 불러올 수 없습니다</h3>
+                <p className="error-message">{message}</p>
+            </div>
+        );
+
+        // 레스토랑 카드 컴포넌트
+        const RestaurantCard = ({ restaurant, index, animationDelay }) => (
+            <div 
+                className="restaurant-card card-enter" 
+                style={{ animationDelay: `${animationDelay}ms` }}
+            >
+                <div className="card-header">
+                    <span className="card-number">#{String(index + 1).padStart(3, '0')}</span>
+                    <span className="card-type">{restaurant['업종명'] || '음식점'}</span>
+                </div>
+                
+                <h2 className="restaurant-name">{restaurant['업소명'] || '이름 없음'}</h2>
+                
+                <div className="info-list">
+                    <div className="info-item">
+                        <div className="info-icon">👤</div>
+                        <div className="info-content">
+                            <div className="info-label">대표자</div>
+                            <div className="info-value">{restaurant['영업자명'] || '-'}</div>
+                        </div>
+                    </div>
+                    
+                    <div className="info-item">
+                        <div className="info-icon">📍</div>
+                        <div className="info-content">
+                            <div className="info-label">주소</div>
+                            <div className="info-value">{restaurant['소재지(도로명)'] || '-'}</div>
+                        </div>
+                    </div>
+                    
+                    <div className="info-item">
+                        <div className="info-icon">📞</div>
+                        <div className="info-content">
+                            <div className="info-label">전화번호</div>
+                            <div className="info-value">{restaurant['소재지전화번호'] || '-'}</div>
+                        </div>
+                    </div>
+                    
+                    <div className="info-item">
+                        <div className="info-icon">📐</div>
+                        <div className="info-content">
+                            <div className="info-label">면적</div>
+                            <div className="info-value">{restaurant['면적'] ? `${restaurant['면적']}㎡` : '-'}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+
+        // 메인 앱 컴포넌트
+        const App = () => {
+            const [allRestaurants, setAllRestaurants] = useState([]);
+            const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
+            const [loading, setLoading] = useState(true);
+            const [error, setError] = useState(null);
+            const [totalCount, setTotalCount] = useState(0);
+
+            // API에서 모든 데이터 로드
+            useEffect(() => {
+                const fetchAllRestaurants = async () => {
+                    try {
+                        // 먼저 전체 개수 확인
+                        const countUrl = `${BASE_URL}?page=1&perPage=1&serviceKey=${API_KEY}`;
+                        const countResponse = await fetch(countUrl);
+                        const countData = await countResponse.json();
+                        const total = countData.totalCount || 100;
+                        setTotalCount(total);
+
+                        // 모든 데이터 로드 (최대 500개)
+                        const fetchCount = Math.min(total, 500);
+                        const url = `${BASE_URL}?page=1&perPage=${fetchCount}&serviceKey=${API_KEY}`;
+                        console.log('API 호출:', url);
+
+                        const response = await fetch(url);
+                        if (!response.ok) {
+                            throw new Error(`HTTP 오류: ${response.status}`);
+                        }
+
+                        const result = await response.json();
+                        console.log('API 응답:', result);
+
+                        if (result.data && Array.isArray(result.data)) {
+                            setAllRestaurants(result.data);
+                            setTotalCount(result.totalCount || result.data.length);
+                        } else {
+                            throw new Error('데이터 형식이 올바르지 않습니다.');
+                        }
+                    } catch (err) {
+                        console.error('API 오류:', err);
+                        setError(err.message);
+                    } finally {
+                        setLoading(false);
+                    }
+                };
+
+                fetchAllRestaurants();
+            }, []);
+
+            // 더 보기 핸들러
+            const handleLoadMore = () => {
+                setVisibleCount(prev => prev + ITEMS_PER_PAGE);
+            };
+
+            // 현재 표시할 레스토랑
+            const visibleRestaurants = allRestaurants.slice(0, visibleCount);
+            const hasMore = visibleCount < allRestaurants.length;
+            const remainingCount = allRestaurants.length - visibleCount;
+
+            return (
+                <div className="app-container">
+                    {/* 헤더 */}
+                    <header className="header">
+                        <span className="header-badge">공공데이터 Open API</span>
+                        <h1>광주광역시 서구 음식점</h1>
+                        <p className="header-subtitle">광주 서구의 맛집을 한눈에 확인하세요</p>
+                    </header>
+
+                    {/* 통계 바 */}
+                    {!loading && !error && (
+                        <div className="stats-bar">
+                            <div className="stat-item">
+                                <div className="stat-value">{totalCount.toLocaleString()}</div>
+                                <div className="stat-label">전체 음식점</div>
+                            </div>
+                            <div className="stat-item">
+                                <div className="stat-value">{visibleRestaurants.length}</div>
+                                <div className="stat-label">현재 표시</div>
+                            </div>
+                            <div className="stat-item">
+                                <div className="stat-value">{ITEMS_PER_PAGE}</div>
+                                <div className="stat-label">페이지당 표시</div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* 콘텐츠 */}
+                    {loading ? (
+                        <Loading />
+                    ) : error ? (
+                        <Error message={error} />
+                    ) : (
+                        <>
+                            {/* 레스토랑 그리드 */}
+                            <div className="restaurant-grid">
+                                {visibleRestaurants.map((restaurant, index) => (
+                                    <RestaurantCard
+                                        key={index}
+                                        restaurant={restaurant}
+                                        index={index}
+                                        animationDelay={index >= visibleCount - ITEMS_PER_PAGE ? (index % ITEMS_PER_PAGE) * 50 : 0}
+                                    />
+                                ))}
+                            </div>
+
+                            {/* 더 보기 버튼 */}
+                            {hasMore ? (
+                                <div className="load-more-container">
+                                    <button className="load-more-btn" onClick={handleLoadMore}>
+                                        🍽️ 더 보기
+                                    </button>
+                                    <span className="remaining-count">
+                                        {remainingCount.toLocaleString()}개의 음식점이 더 있습니다
+                                    </span>
+                                </div>
+                            ) : (
+                                <div className="all-loaded">
+                                    <div className="all-loaded-icon">🎉</div>
+                                    <p>모든 음식점을 불러왔습니다!</p>
+                                </div>
+                            )}
+                        </>
+                    )}
+
+                    {/* 푸터 */}
+                    <footer className="footer">
+                        <p>데이터 제공: <a href="https://www.data.go.kr" target="_blank" rel="noopener noreferrer">공공데이터포털</a> | 광주광역시 서구</p>
+                        <p style={{ marginTop: '10px', fontSize: '0.8rem' }}>Built with React ⚛️</p>
+                    </footer>
+                </div>
+            );
+        };
+
+        // 렌더링
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
+
