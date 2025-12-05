@@ -1,0 +1,15 @@
+# 환경 변수 파일 (API 키 보호)
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+.venv/
+
+# 추출된 텍스트 (선택적)
+# extracted_texts/
+
