@@ -1,0 +1,6 @@
+# Webshare Proxy Configuration
+# Copy this file to .env and fill in your actual credentials
+PROXY_USERNAME=your_proxy_username_here
+PROXY_PASSWORD=your_proxy_password_here
+
+

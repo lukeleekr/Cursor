@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>테스트</title>
+    <style>
+        .keyword-item {
+            background-color: #e8f5e9;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .review-list {
+            display: none;
+            margin-top: 10px;
+            padding-left: 20px;
+        }
+        .review-list.active {
+            display: block;
+        }
+        .review-item {
+            background-color: #f5f5f5;
+            padding: 10px;
+            margin: 5px 0;
+        }
+    </style>
+    <script>
+        function toggleReviews(element) {
+            const reviewList = element.querySelector('.review-list');
+            if (reviewList) {
+                if (reviewList.classList.contains('active')) {
+                    reviewList.classList.remove('active');
+                } else {
+                    reviewList.classList.add('active');
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="keyword-item" onclick="toggleReviews(this)">
+        <div class="keyword-header">테스트 키워드</div>
+        <div class="keyword-count">언급 횟수: 5</div>
+        <div class="review-list">
+            <div class="review-item">리뷰 1: 이것은 테스트 리뷰입니다.</div>
+            <div class="review-item">리뷰 2: 또 다른 테스트 리뷰입니다.</div>
+        </div>
+    </div>
+</body>
+</html>
+

@@ -1,0 +1,4 @@
+youtube-transcript-api>=1.2.3
+python-dotenv>=1.0.0
+openai>=1.0.0
+

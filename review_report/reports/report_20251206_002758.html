@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>고객 리뷰 분석 보고서</title>
+    <style>
+        body {
+            font-family: 'Malgun Gothic', '맑은 고딕', Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            border-bottom: 3px solid #4CAF50;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #555;
+            margin-top: 30px;
+            border-left: 4px solid #4CAF50;
+            padding-left: 10px;
+        }
+        h3 {
+            color: #666;
+            margin-top: 20px;
+        }
+        .stat-box {
+            background-color: #f9f9f9;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border-left: 3px solid #4CAF50;
+        }
+        .keyword-item {
+            background-color: #e8f5e9;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .keyword-item:hover {
+            background-color: #c8e6c9;
+        }
+        .keyword-header {
+            font-weight: bold;
+            font-size: 1.1em;
+            color: #2e7d32;
+            margin-bottom: 10px;
+        }
+        .keyword-count {
+            color: #666;
+            font-size: 0.9em;
+        }
+        .review-list {
+            display: none;
+            margin-top: 10px;
+            padding-left: 20px;
+        }
+        .review-list.active {
+            display: block;
+        }
+        .review-item {
+            background-color: #f5f5f5;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 3px;
+            border-left: 3px solid #81c784;
+        }
+        .negative-keyword {
+            background-color: #ffebee;
+        }
+        .negative-keyword:hover {
+            background-color: #ffcdd2;
+        }
+        .negative-keyword .keyword-header {
+            color: #c62828;
+        }
+        .negative-keyword .review-item {
+            border-left-color: #ef5350;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+    </style>
+    <script>
+        function toggleReviews(element) {
+            const reviewList = element.querySelector('.review-list');
+            if (reviewList) {
+                if (reviewList.classList.contains('active')) {
+                    reviewList.classList.remove('active');
+                } else {
+                    reviewList.classList.add('active');
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>고객 리뷰 분석 보고서</h1>
+        <p><strong>생성 일시:</strong> 2025-12-06 00:30:27</p>
+        
+        <h2>1. 기본 통계</h2>
+        <div class="stat-box">
+            <p><strong>총 리뷰 수:</strong> 50</p>
+
+            <p><strong>평균 평점:</strong> 3.48</p>
+            <p><strong>중앙값:</strong> 4.00</p>
+
+        </div>
+
+        <h2>2. 감정 분석 (OpenAI API)</h2>
+        <div class="stat-box">
+            <p><strong>긍정 리뷰:</strong> 28 (56.0%)</p>
+            <p><strong>부정 리뷰:</strong> 16 (32.0%)</p>
+            <p><strong>중립 리뷰:</strong> 6 (12.0%)</p>
+        </div>
+        
+        <h3>긍정 키워드 분석</h3>
+        <p>키워드를 클릭하면 관련 리뷰를 확인할 수 있습니다.</p>
+
+        <div class="keyword-item" onclick="toggleReviews(this)">
+            <div class="keyword-header">성능</div>
+            <div class="keyword-count">언급 횟수: 12</div>
+            <div class="review-list">
+                <div class="review-item">정말 만족스러운 제품입니다. 화면이 선명하고 성능도 뛰어나네요. 특히 터치스크린 기능이 너무 좋아요!</div>
+                <div class="review-item">게임용으로 샀는데 정말 만족합니다! 고사양 게임도 끊김 없이 잘 돌아가고 쿨링도 좋아요.</div>
+                <div class="review-item">업무용으로 완벽합니다. 키보드감이 최고고 내구성도 뛰어나요. 오래 사용할 수 있을 것 같아요.</div>
+                <div class="review-item">삼성 제품이라 믿고 샀는데 역시 만족스럽네요. 빠르고 안정적이에요. 디스플레이 색감도 좋고요!</div>
+                <div class="review-item">프리미엄 노트북답게 모든 면에서 만족스럽습니다. 디자인, 성능, 휴대성 모두 완벽해요!</div>
+
+            </div>
+        </div>
+
+        <div class="keyword-item" onclick="toggleReviews(this)">
+            <div class="keyword-header">디자인</div>
+            <div class="keyword-count">언급 횟수: 10</div>
+            <div class="review-list">
+                <div class="review-item">전반적으로 좋지만 가격이 조금 비싸다는 느낌이에요. 그래도 디자인과 성능은 만족합니다.</div>
+                <div class="review-item">디자인이 예쁘고 터치스크린도 반응이 좋아요. 다만 포트가 부족해서 허브를 따로 사야 해요.</div>
+                <div class="review-item">프리미엄 느낌이 확실히 나네요. 영상 편집 작업할 때 정말 빠르고 좋습니다. 가격이 비싸긴 하지만 그럴 만해요.</div>
+                <div class="review-item">가성비 좋은 제품인 것 같아요. 디자인도 깔끔하고 성능도 준수합니다. 다만 스피커 소리가 좀 작아요.</div>
+                <div class="review-item">정말 만족스러운 구매였어요. OLED 화면이 정말 선명하고 성능도 뛰어납니다. 디자인도 세련되고요!</div>
+
+            </div>
+        </div>
+
+        <div class="keyword-item" onclick="toggleReviews(this)">
+            <div class="keyword-header">배터리</div>
+            <div class="keyword-count">언급 횟수: 7</div>
+            <div class="review-list">
+                <div class="review-item">전체적으로 만족합니다. 성능도 좋고 배터리도 오래가요. 다만 무게가 조금 무거운 편이에요.</div>
+                <div class="review-item">M1 칩 성능이 정말 좋네요. 발열도 거의 없고 조용해요. 다만 포트가 부족한 게 아쉽습니다.</div>
+                <div class="review-item">비즈니스용으로 적합한 것 같아요. 깔끔한 디자인에 성능도 나쁘지 않습니다. 배터리도 오래가고요.</div>
+                <div class="review-item">M2 칩 성능이 정말 인상적이에요. 발열도 적고 배터리도 오래가고 모든 게 완벽합니다.</div>
+                <div class="review-item">게이밍 성능은 만족스럽습니다. 고사양 게임도 잘 돌아가요. 하지만 발열과 소음이 조금 아쉬워요.</div>
+
+            </div>
+        </div>
+
+        <div class="keyword-item" onclick="toggleReviews(this)">
+            <div class="keyword-header">휴대성</div>
+            <div class="keyword-count">언급 횟수: 6</div>
+            <div class="review-list">
+                <div class="review-item">휴대성이 정말 좋아요. 어디든 들고 다니기 편하고 성능도 나쁘지 않습니다. 키보드를 별도 구매해야 하는 게 아쉽긴 해요.</div>
+                <div class="review-item">2-in-1 기능이 정말 편리해요! 태블릿으로도 쓸 수 있어서 활용도가 높습니다. 터치펜도 반응이 좋고요.</div>
+                <div class="review-item">프리미엄 노트북답게 모든 면에서 만족스럽습니다. 디자인, 성능, 휴대성 모두 완벽해요!</div>
+                <div class="review-item">크리에이터용으로는 나쁘지 않아요. 색 정확도도 좋고 성능도 충분합니다. 다만 무게가 좀 나가요.</div>
+                <div class="review-item">게이밍 노트북 치고는 얇고 가벼워요. 성능도 좋고 디자인도 깔끔합니다. 가격만 조금 더 저렴하면 좋겠어요.</div>
+
+            </div>
+        </div>
+
+        <div class="keyword-item" onclick="toggleReviews(this)">
+            <div class="keyword-header">가격</div>
+            <div class="keyword-count">언급 횟수: 6</div>
+            <div class="review-list">
+                <div class="review-item">전반적으로 좋지만 가격이 조금 비싸다는 느낌이에요. 그래도 디자인과 성능은 만족합니다.</div>
+                <div class="review-item">프리미엄 느낌이 확실히 나네요. 영상 편집 작업할 때 정말 빠르고 좋습니다. 가격이 비싸긴 하지만 그럴 만해요.</div>
+                <div class="review-item">가격이 저렴해서 기대를 안 했는데 생각보다 괜찮아요. 간단한 업무용으로는 충분합니다.</div>
+                <div class="review-item">독특한 형태의 게이밍 노트북이네요. 성능도 좋고 휴대성도 나쁘지 않아요. 다만 가격이 비싸요.</div>
+                <div class="review-item">게이밍 성능이 좋고 가격도 합리적이에요. 다만 배터리 수명이 짧아서 항상 충전기를 들고 다녀야 해요.</div>
+
+            </div>
+        </div>
+
+        <div class="keyword-item" onclick="toggleReviews(this)">
+            <div class="keyword-header">터치스크린</div>
+            <div class="keyword-count">언급 횟수: 4</div>
+            <div class="review-list">
+                <div class="review-item">정말 만족스러운 제품입니다. 화면이 선명하고 성능도 뛰어나네요. 특히 터치스크린 기능이 너무 좋아요!</div>
+                <div class="review-item">디자인이 예쁘고 터치스크린도 반응이 좋아요. 다만 포트가 부족해서 허브를 따로 사야 해요.</div>
+                <div class="review-item">2-in-1 기능이 정말 편리해요! 태블릿으로도 쓸 수 있어서 활용도가 높습니다. 터치펜도 반응이 좋고요.</div>
+                <div class="review-item">정말 마음에 들어요! 화면도 예쁘고 성능도 좋고 배터리도 오래가요. 삼성 스마트폰과 연동도 잘 되고요.</div>
+
+            </div>
+        </div>
+
+        <div class="keyword-item" onclick="toggleReviews(this)">
+            <div class="keyword-header">게임</div>
+            <div class="keyword-count">언급 횟수: 5</div>
+            <div class="review-list">
+                <div class="review-item">게임용으로 샀는데 정말 만족합니다! 고사양 게임도 끊김 없이 잘 돌아가고 쿨링도 좋아요.</div>
+                <div class="review-item">견고하고 게임 성능도 좋아요. 가격도 합리적이고요. 다만 디자인이 조금 투박한 감이 있어요.</div>
+                <div class="review-item">게이밍 성능은 만족스럽습니다. 고사양 게임도 잘 돌아가요. 하지만 발열과 소음이 조금 아쉬워요.</div>
+                <div class="review-item">크리에이터용으로 색감이 정말 좋아요. 성능도 만족스럽고 디자인도 독특해서 마음에 들어요.</div>
+                <div class="review-item">게이밍 노트북 치고는 얇고 가벼워요. 성능도 좋고 디자인도 깔끔합니다. 가격만 조금 더 저렴하면 좋겠어요.</div>
+
+            </div>
+        </div>
+
+        <div class="keyword-item" onclick="toggleReviews(this)">
+            <div class="keyword-header">내구성</div>
+            <div class="keyword-count">언급 횟수: 3</div>
+            <div class="review-list">
+                <div class="review-item">업무용으로 완벽합니다. 키보드감이 최고고 내구성도 뛰어나요. 오래 사용할 수 있을 것 같아요.</div>
+                <div class="review-item">프리미엄 노트북답게 모든 면에서 만족스럽습니다. 디자인, 성능, 휴대성 모두 완벽해요!</div>
+                <div class="review-item">M2 칩 성능이 정말 인상적이에요. 발열도 적고 배터리도 오래가고 모든 게 완벽합니다.</div>
+
+            </div>
+        </div>
+
+        <div class="keyword-item" onclick="toggleReviews(this)">
+            <div class="keyword-header">화면</div>
+            <div class="keyword-count">언급 횟수: 5</div>
+            <div class="review-list">
+                <div class="review-item">정말 만족스러운 제품입니다. 화면이 선명하고 성능도 뛰어나네요. 특히 터치스크린 기능이 너무 좋아요!</div>
+                <div class="review-item">삼성 제품이라 믿고 샀는데 역시 만족스럽네요. 빠르고 안정적이에요. 디스플레이 색감도 좋고요!</div>
+                <div class="review-item">정말 만족스러운 구매였어요. OLED 화면이 정말 선명하고 성능도 뛰어납니다. 디자인도 세련되고요!</div>
+                <div class="review-item">영상 편집 전문가로서 이 정도 성능이면 완벽합니다. 화면도 크고 선명해서 작업하기 정말 좋아요.</div>
+                <div class="review-item">삼성 제품 중에서 최고인 것 같아요! 모든 면에서 만족스럽습니다. 특히 화면 품질이 정말 좋아요.</div>
+
+            </div>
+        </div>
+
+        <h3>부정 키워드 분석</h3>
+        <p>키워드를 클릭하면 관련 리뷰를 확인할 수 있습니다.</p>
+
+        <div class="keyword-item negative-keyword" onclick="toggleReviews(this)">
+            <div class="keyword-header">배터리</div>
+            <div class="keyword-count">언급 횟수: 5</div>
+            <div class="review-list">
+                <div class="review-item">너무 실망스럽습니다. 배터리가 금방 닳고 키보드 터치감도 별로예요. 17인치라서 무겁기까지 해요.</div>
+                <div class="review-item">게임은 잘 되지만 소음이 너무 커서 불편해요. 그리고 배터리 수명이 너무 짧습니다.</div>
+                <div class="review-item">정말 후회되는 구매입니다. 느리고 자꾸 에러가 나요. 고객센터 응대도 불친절해서 더 화가 나네요.</div>
+                <div class="review-item">2-in-1 기능을 기대했는데 실제로는 불편해요. 무겁고 연결 부분도 자꾸 문제가 생겨요. 후회됩니다.</div>
+                <div class="review-item">기대했던 것보다 너무 실망스러워요. 발열이 심하고 팬 소음도 너무 커서 집중이 안 돼요.</div>
+
+            </div>
+        </div>
+
+        <div class="keyword-item negative-keyword" onclick="toggleReviews(this)">
+            <div class="keyword-header">소음</div>
+            <div class="keyword-count">언급 횟수: 5</div>
+            <div class="review-list">
+                <div class="review-item">게임은 잘 되지만 소음이 너무 커서 불편해요. 그리고 배터리 수명이 너무 짧습니다.</div>
+                <div class="review-item">게이밍 노트북이라고 하기엔 성능이 부족해요. 발열도 심하고 소음도 너무 커서 사용하기 불편합니다.</div>
+                <div class="review-item">가격 대비 게이밍 성능은 괜찮아요. 하지만 빌드 퀄리티가 아쉽고 소음이 너무 커요.</div>
+                <div class="review-item">기대했던 것보다 너무 실망스러워요. 발열이 심하고 팬 소음도 너무 커서 집중이 안 돼요.</div>
+                <div class="review-item">최악의 구매였습니다. 켜지지도 않고 A/S 서비스도 형편없어요. 돈 낭비했습니다.</div>
+
+            </div>
+        </div>
+
+        <div class="keyword-item negative-keyword" onclick="toggleReviews(this)">
+            <div class="keyword-header">느림</div>
+            <div class="keyword-count">언급 횟수: 6</div>
+            <div class="review-list">
+                <div class="review-item">최악의 구매였습니다. 켜지지도 않고 A/S 서비스도 형편없어요. 돈 낭비했습니다.</div>
+                <div class="review-item">정말 후회되는 구매입니다. 느리고 자꾸 에러가 나요. 고객센터 응대도 불친절해서 더 화가 나네요.</div>
+                <div class="review-item">회사에서 지급받았는데 정말 느려요. 부팅도 오래 걸리고 프로그램 실행도 답답합니다. 업무 효율이 떨어져요.</div>
+                <div class="review-item">업무용으로 샀는데 너무 느려요. 멀티태스킹은 꿈도 못 꾸겠어요. 답답해서 일이 안 됩니다.</div>
+                <div class="review-item">게이밍 노트북 치고는 성능이 아쉬워요. 중간 옵션으로 게임하면 괜찮지만 최고 옵션은 힘들어해요.</div>
+
+            </div>
+        </div>
+
+        <div class="keyword-item negative-keyword" onclick="toggleReviews(this)">
+            <div class="keyword-header">성능</div>
+            <div class="keyword-count">언급 횟수: 6</div>
+            <div class="review-list">
+                <div class="review-item">가격은 저렴하지만 그만큼 성능도 별로예요. 느리고 자꾸 프리징이 걸립니다.</div>
+                <div class="review-item">가벼운 건 좋은데 성능이 아쉬워요. 간단한 작업용으로는 괜찮지만 무거운 프로그램은 힘들어해요.</div>
+                <div class="review-item">게이밍 노트북이라고 하기엔 성능이 부족해요. 발열도 심하고 소음도 너무 커서 사용하기 불편합니다.</div>
+                <div class="review-item">기대했던 것보다 너무 실망스러워요. 발열이 심하고 팬 소음도 너무 커서 집중이 안 돼요.</div>
+                <div class="review-item">혁신적이라고 했는데 실제로는 너무 복잡하고 불편해요. 가격도 비싸고 성능도 기대에 못 미쳐요.</div>
+
+            </div>
+        </div>
+
+        <div class="keyword-item negative-keyword" onclick="toggleReviews(this)">
+            <div class="keyword-header">무게</div>
+            <div class="keyword-count">언급 횟수: 4</div>
+            <div class="review-list">
+                <div class="review-item">너무 실망스럽습니다. 배터리가 금방 닳고 키보드 터치감도 별로예요. 17인치라서 무겁기까지 해요.</div>
+                <div class="review-item">2-in-1 기능을 기대했는데 실제로는 불편해요. 무겁고 연결 부분도 자꾸 문제가 생겨요. 후회됩니다.</div>
+                <div class="review-item">가벼운 건 좋은데 성능이 아쉬워요. 간단한 작업용으로는 괜찮지만 무거운 프로그램은 힘들어해요.</div>
+                <div class="review-item">가격은 저렴하지만 그만큼 성능도 별로예요. 느리고 자꾸 프리징이 걸립니다.</div>
+
+            </div>
+        </div>
+
+        <div class="keyword-item negative-keyword" onclick="toggleReviews(this)">
+            <div class="keyword-header">A/S</div>
+            <div class="keyword-count">언급 횟수: 3</div>
+            <div class="review-list">
+                <div class="review-item">최악의 구매였습니다. 켜지지도 않고 A/S 서비스도 형편없어요. 돈 낭비했습니다.</div>
+                <div class="review-item">정말 후회되는 구매입니다. 느리고 자꾸 에러가 나요. 고객센터 응대도 불친절해서 더 화가 나네요.</div>
+                <div class="review-item">기대했던 것보다 너무 실망스러워요. 발열이 심하고 팬 소음도 너무 커서 집중이 안 돼요.</div>
+
+            </div>
+        </div>
+
+        <div class="keyword-item negative-keyword" onclick="toggleReviews(this)">
+            <div class="keyword-header">프리징</div>
+            <div class="keyword-count">언급 횟수: 2</div>
+            <div class="review-list">
+                <div class="review-item">가격은 저렴하지만 그만큼 성능도 별로예요. 느리고 자꾸 프리징이 걸립니다.</div>
+                <div class="review-item">정말 후회되는 구매입니다. 느리고 자꾸 에러가 나요. 고객센터 응대도 불친절해서 더 화가 나네요.</div>
+
+            </div>
+        </div>
+
+        <div class="keyword-item negative-keyword" onclick="toggleReviews(this)">
+            <div class="keyword-header">에러</div>
+            <div class="keyword-count">언급 횟수: 2</div>
+            <div class="review-list">
+                <div class="review-item">정말 후회되는 구매입니다. 느리고 자꾸 에러가 나요. 고객센터 응대도 불친절해서 더 화가 나네요.</div>
+                <div class="review-item">최악의 구매였습니다. 켜지지도 않고 A/S 서비스도 형편없어요. 돈 낭비했습니다.</div>
+
+            </div>
+        </div>
+
+        <div class="keyword-item negative-keyword" onclick="toggleReviews(this)">
+            <div class="keyword-header">화면</div>
+            <div class="keyword-count">언급 횟수: 3</div>
+            <div class="review-list">
+                <div class="review-item">화면은 크고 좋은데 성능이 화면 크기에 비해 부족한 느낌이에요. 가벼운 건 좋은데 성능이 아쉬워요.</div>
+                <div class="review-item">기대했던 것보다 너무 실망스러워요. 발열이 심하고 팬 소음도 너무 커서 집중이 안 돼요.</div>
+                <div class="review-item">2-in-1 기능을 기대했는데 실제로는 불편해요. 무겁고 연결 부분도 자꾸 문제가 생겨요. 후회됩니다.</div>
+
+            </div>
+        </div>
+
+        <div class="keyword-item negative-keyword" onclick="toggleReviews(this)">
+            <div class="keyword-header">고장</div>
+            <div class="keyword-count">언급 횟수: 2</div>
+            <div class="review-list">
+                <div class="review-item">처음엔 괜찮다 생각했는데 사용할수록 문제가 많이 보여요. 키보드도 고장 나고 화면도 깜빡거려요.</div>
+                <div class="review-item">정말 후회되는 구매입니다. 느리고 자꾸 에러가 나요. 고객센터 응대도 불친절해서 더 화가 나네요.</div>
+
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>
