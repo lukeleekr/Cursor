@@ -369,7 +369,7 @@ class ReportGenerator:
             <div class="review-list">
 """
                     for review in reviews[:5]:
-                        review_escaped = review.replace('"', '&quot;').replace('<', '&lt;').replace('>', '&gt;')
+                        review_escaped = review.replace('&', '&amp;').replace('"', '&quot;').replace('<', '&lt;').replace('>', '&gt;')
                         html_content += f'                <div class="review-item">{review_escaped}</div>\n'
                     
                     html_content += """
@@ -398,7 +398,7 @@ class ReportGenerator:
             <div class="review-list">
 """
                     for review in reviews[:5]:
-                        review_escaped = review.replace('"', '&quot;').replace('<', '&lt;').replace('>', '&gt;')
+                        review_escaped = review.replace('&', '&amp;').replace('"', '&quot;').replace('<', '&lt;').replace('>', '&gt;')
                         html_content += f'                <div class="review-item">{review_escaped}</div>\n'
                     
                     html_content += """

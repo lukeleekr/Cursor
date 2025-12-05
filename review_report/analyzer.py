@@ -16,7 +16,6 @@ from openai import OpenAI
 
 # .env 파일에서 환경 변수 로드
 load_dotenv()
-load_dotenv()
 
 
 class ReviewAnalyzer:
